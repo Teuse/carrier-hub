@@ -1,0 +1,30 @@
+services:
+
+  backend:
+    build: .
+    container_name: ddb-backend
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:16
+    container_name: ddb-postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ddb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ddb_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  ddb_pgdata:
