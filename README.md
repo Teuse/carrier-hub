@@ -1,14 +1,13 @@
 # carrier-hub
 
-Click-dummy for the Carrier Hub tool. The project consists of a React frontend (`/sumitDDP`) and a Kotlin/SpringBoot backend (`/ddb-service`).  
-The names `ddp` and `sumit` are legacy and can be ignored.
+Click-dummy for the Carrier Hub tool. The project consists of a React frontend (`/frontend`) and a Kotlin/SpringBoot backend (`/service`).  
 
 ## Frontend
 
 Built with React and MUI.
 
 ```bash
-cd sumitDDP
+cd frontend
 npm install
 npm run dev
 ```
