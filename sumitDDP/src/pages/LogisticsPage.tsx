@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import RequestTable from "../components/RequestTable";
-import { LoadCarrierRequestApi } from "../api";
+import { LoadCarrierRequestApi } from "../api/loadCarrierRequestApi";
 import type { LoadCarrierRequestDto } from "../api";
 
 function isHistory(status: LoadCarrierRequestDto["status"]) {

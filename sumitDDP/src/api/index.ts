@@ -1,5 +1,6 @@
 export * from './types';
 
-export { LoadCarrierRequestApi } from './loadCarrierRequestApi';
 export { WorkbenchApi } from './workbenchApi';
 export { DashboardApi } from './DashboardApi';
+export { LoadCarrierApi } from './LoadCarrierApi';
+export { LoadCarrierRequestApi } from './loadCarrierRequestApi';

@@ -60,12 +60,12 @@ export default function LoadCarrierRequestRow({
 
         <TableCell>
           <Typography fontWeight="bold">
-            {request.name}
+            {request.loadCarrierName}
           </Typography>
         </TableCell>
 
         <TableCell>
-          {request.workbench.name}
+          {request.workbenchName}
         </TableCell>
 
         <TableCell>
@@ -108,7 +108,7 @@ export default function LoadCarrierRequestRow({
               <Stack spacing={1}>
                 <Typography>
                   <strong>Description:</strong>{' '}
-                  {request.description || '–'}
+                  {request.loadCarrierName || '–'}
                 </Typography>
 
                 <Typography>
@@ -123,7 +123,7 @@ export default function LoadCarrierRequestRow({
 
                 <Typography>
                   <strong>Workbench:</strong>{' '}
-                  {request.workbench.name}
+                  {request.workbenchName}
                 </Typography>
 
                 {isHistory && (

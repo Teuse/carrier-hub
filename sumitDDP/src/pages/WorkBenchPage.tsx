@@ -11,16 +11,12 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import WorkbenchSelector from '../components/WorkbenchSelector';
-import RequestDialog from '../components/RequestDialog';
+import RequestLoadCarrierDialog from '../components/RequestLoadCarrierDialog';
 import QrRequestDialog from '../components/QrRequestDialog';
 import RequestTable from '../components/RequestTable';
 
 import { WorkbenchApi } from '../api';
-import type {
-  LoadCarrierRequestDto,
-  WorkbenchDto,
-  RequestPriority,
-} from '../api';
+import type { LoadCarrierRequestDto, WorkbenchDto, RequestPriority } from '../api';
 
 /* ====================================================== */
 
@@ -34,12 +30,10 @@ export default function WorkbenchPage() {
 
   /* ---------- workbenches ---------- */
   const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
-  const [selectedWorkbenchId, setSelectedWorkbenchId] = useState<number | null>(
-    () => {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? Number(stored) : null;
-    }
-  );
+  const [selectedWorkbenchId, setSelectedWorkbenchId] = useState<number | null>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? Number(stored) : null;
+  });
 
   /* ---------- requests ---------- */
   const [requests, setRequests] = useState<LoadCarrierRequestDto[]>([]);
@@ -52,27 +46,18 @@ export default function WorkbenchPage() {
 
   /* ====================================================== */
 
-  const selectedWorkbench = workbenches.find(
-    (w) => w.id === selectedWorkbenchId
-  );
+  const selectedWorkbench = workbenches.find((w) => w.id === selectedWorkbenchId);
 
   const sortedRequests = useMemo(
     () =>
       [...requests].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       ),
     [requests]
   );
 
-  const activeRequests = sortedRequests.filter(
-    (r) => r.status !== 'DELIVERED'
-  );
-
-  const historyRequests = sortedRequests.filter(
-    (r) => r.status === 'DELIVERED'
-  );
+  const activeRequests = sortedRequests.filter((r) => r.status !== 'DELIVERED');
+  const historyRequests = sortedRequests.filter((r) => r.status === 'DELIVERED');
 
   const hasOpenRequest = activeRequests.length > 0;
 
@@ -86,6 +71,7 @@ export default function WorkbenchPage() {
     if (selectedWorkbenchId) {
       loadRequests(selectedWorkbenchId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWorkbenchId]);
 
   const loadRequests = async (workbenchId: number) => {
@@ -103,12 +89,11 @@ export default function WorkbenchPage() {
   };
 
   /* ====================================================== */
-  /* Request creation                                      */
+  /* Request creation (template-based)                       */
   /* ====================================================== */
 
   const createRequest = async (payload: {
-    name: string;
-    description?: string;
+    loadCarrierId: number;
     comment?: string;
     priority: RequestPriority;
   }) => {
@@ -117,11 +102,10 @@ export default function WorkbenchPage() {
     setIsLoading(true);
     setError(null);
 
+    console.log("Creating request with payload:", payload)
+
     try {
-      await WorkbenchApi.requestNew(
-        selectedWorkbenchId,
-        payload
-      );
+      await WorkbenchApi.requestNew(selectedWorkbenchId, payload);
 
       setRequestDialogOpen(false);
       setQrDialogOpen(false);
@@ -201,22 +185,14 @@ export default function WorkbenchPage() {
         {/* ================= Tables ================= */}
         {!isLoading && selectedWorkbench && (
           <>
-            <RequestTable
-              title="Active Requests"
-              requests={activeRequests}
-            />
-
-            <RequestTable
-              title="History"
-              requests={historyRequests}
-              isHistory={() => true}
-            />
+            <RequestTable title="Active Requests" requests={activeRequests} />
+            <RequestTable title="History" requests={historyRequests} isHistory={() => true} />
           </>
         )}
       </Box>
 
       {/* ================= Dialogs ================= */}
-      <RequestDialog
+      <RequestLoadCarrierDialog
         open={requestDialogOpen}
         onClose={() => setRequestDialogOpen(false)}
         onSubmit={createRequest}

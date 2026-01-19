@@ -28,13 +28,15 @@ export type LoadCarrierRequestStatus =
 
 export interface LoadCarrierRequestDto {
   id: number;
-  name: string;
-  description?: string;
+  workbenchId: number;
+  workbenchName: string;
+  loadCarrierId: number;
+  loadCarrierName: string;
   comment?: string;
   priority: RequestPriority;
-  status: LoadCarrierRequestStatus;
+  status: string;
   createdAt: string;
-  workbench: WorkbenchDto;
+  deliveredAt?: string;
 }
 
 /* ===================================================== */
@@ -42,8 +44,7 @@ export interface LoadCarrierRequestDto {
 /* ===================================================== */
 
 export interface CreateLoadCarrierRequestDto {
-  name: string;
-  description?: string;
+  loadCarrierId: number;
   comment?: string;
-  priority: RequestPriority;
+  priority: string;
 }

@@ -5,7 +5,7 @@ import WorkBenchPage from "./pages/WorkBenchPage";
 import LogisticsPage from "./pages/LogisticsPage";
 import WarehousePage from "./pages/WarehousePage";
 import WorkbenchManagementPage from "./pages/WorkbenchManagementPage";
-import LoadCarrierManagement from './pages/LoadCarrierManagement';
+import LoadCarrierManagementPage from './pages/LoadCarrierManagementPage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
 import { Box } from "@mui/material";
@@ -32,11 +32,8 @@ export default function App() {
                 <Route path="/workbench" element={<WorkBenchPage />} />
                 <Route path="/logistics" element={<LogisticsPage />} />
                 <Route path="/warehouse" element={<WarehousePage />} />
-                <Route
-                  path="/workbenches/manage"
-                  element={<WorkbenchManagementPage />}
-                />
-                <Route path="/load-carriers/manage" element={<LoadCarrierManagement />} />
+                <Route path="/workbenches/manage" element={<WorkbenchManagementPage />} />
+                <Route path="/load-carriers/manage" element={<LoadCarrierManagementPage />} />
               </Routes>
             </Box>
           </ProtectedRoute>

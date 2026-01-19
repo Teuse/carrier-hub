@@ -12,7 +12,7 @@ export type CreateLoadCarrierRequestPayload = {
   priority: string;
 };
 
-export default function RequestDialog(props: {
+export default function RequestLoadCarrierDialog(props: {
   open: boolean;
   isLoading: boolean;
   onClose: () => void;
