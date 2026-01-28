@@ -11,27 +11,24 @@ interface LoadCarrierRepository : JpaRepository<LoadCarrier, Long> {
     @Query("""
         select distinct lc
         from LoadCarrier lc
-        left join fetch lc.items
         where lc.deletedAt is null
         order by lc.id
     """)
-    fun findAllActiveWithItems(): List<LoadCarrier>
+    fun findAllActive(): List<LoadCarrier>
 
     @Query("""
         select lc
         from LoadCarrier lc
-        left join fetch lc.items
         where lc.id = :id and lc.deletedAt is null
     """)
-    fun findActiveByIdWithItems(@Param("id") id: Long): Optional<LoadCarrier>
+    fun findActiveById(@Param("id") id: Long): Optional<LoadCarrier>
 
     @Query("""
         select lc
         from LoadCarrier lc
-        left join fetch lc.items
         where lc.qrCode = :qrCode and lc.deletedAt is null
     """)
-    fun findActiveByQrCodeWithItems(@Param("qrCode") qrCode: String): Optional<LoadCarrier>
+    fun findActiveByQrCode(@Param("qrCode") qrCode: String): Optional<LoadCarrier>
 
     fun existsByQrCode(qrCode: String): Boolean
 }

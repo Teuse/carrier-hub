@@ -31,7 +31,6 @@ import { QRCodeCanvas } from 'qrcode.react';
 import {
   LoadCarrierApi,
   type LoadCarrierDto,
-  type CreateItemDto,
   type CreateLoadCarrierDto,
   type UpdateLoadCarrierDto,
 } from '../api/LoadCarrierApi';
@@ -57,7 +56,6 @@ type EditFormState = {
   name: string;
   description: string;
   qrCode: string;
-  items: CreateItemDto[];
 };
 
 function toEditFormState(existing?: LoadCarrierDto): EditFormState {
@@ -65,23 +63,11 @@ function toEditFormState(existing?: LoadCarrierDto): EditFormState {
     name: existing?.name ?? '',
     description: existing?.description ?? '',
     qrCode: existing?.qrCode ?? '',
-    items:
-      existing?.items?.map((i) => ({
-        name: i.name,
-        description: i.description ?? '',
-        count: i.count,
-      })) ?? [],
   };
 }
 
 function isValidForm(s: EditFormState): boolean {
   if (!s.name.trim()) return false;
-  if (!s.qrCode.trim()) return false;
-  // items optional; but if present, require name + count >=1
-  for (const it of s.items) {
-    if (!it.name.trim()) return false;
-    if (!Number.isFinite(it.count) || it.count < 0) return false;
-  }
   return true;
 }
 
@@ -102,42 +88,11 @@ function LoadCarrierEditDialog(props: {
 
   const title = mode === 'create' ? 'Create Load Carrier' : 'Edit Load Carrier';
 
-  const handleItemChange = (
-    idx: number,
-    patch: Partial<CreateItemDto>
-  ) => {
-    setForm((prev) => {
-      const items = [...prev.items];
-      items[idx] = { ...items[idx], ...patch };
-      return { ...prev, items };
-    });
-  };
-
-  const addItem = () => {
-    setForm((prev) => ({
-      ...prev,
-      items: [...prev.items, { name: '', description: '', count: 1 }],
-    }));
-  };
-
-  const removeItem = (idx: number) => {
-    setForm((prev) => {
-      const items = [...prev.items];
-      items.splice(idx, 1);
-      return { ...prev, items };
-    });
-  };
-
   const submit = () => {
     const payload = {
       name: form.name.trim(),
       description: form.description.trim() || undefined,
       qrCode: form.qrCode.trim(),
-      items: form.items.map((i) => ({
-        name: i.name.trim(),
-        description: i.description?.trim() || undefined,
-        count: Number(i.count),
-      })),
     };
 
     onSubmit(payload);
@@ -175,75 +130,6 @@ function LoadCarrierEditDialog(props: {
             multiline
             minRows={2}
           />
-
-          <TextField
-            label="QR Code"
-            value={form.qrCode}
-            onChange={(e) => setForm((p) => ({ ...p, qrCode: e.target.value }))}
-            fullWidth
-            required
-            helperText="The QR code should contain a stable identifier (e.g., LC-XXXX)."
-          />
-
-          <Divider />
-
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6">Items</Typography>
-            <Button variant="outlined" onClick={addItem}>
-              Add Item
-            </Button>
-          </Stack>
-
-          {form.items.length === 0 && (
-            <Typography color="text.secondary">
-              No items defined (optional).
-            </Typography>
-          )}
-
-          {form.items.map((it, idx) => (
-            <Paper key={idx} sx={{ p: 2 }}>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <TextField
-                    label="Item Name"
-                    value={it.name}
-                    onChange={(e) => handleItemChange(idx, { name: e.target.value })}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    label="Count"
-                    type="number"
-                    value={it.count}
-                    onChange={(e) =>
-                      handleItemChange(idx, { count: Number(e.target.value) })
-                    }
-                    sx={{ width: 140 }}
-                    inputProps={{ min: 0 }}
-                    required
-                  />
-                  <Button
-                    color="error"
-                    variant="outlined"
-                    onClick={() => removeItem(idx)}
-                  >
-                    Remove
-                  </Button>
-                </Stack>
-
-                <TextField
-                  label="Item Description"
-                  value={it.description ?? ''}
-                  onChange={(e) =>
-                    handleItemChange(idx, { description: e.target.value })
-                  }
-                  fullWidth
-                  multiline
-                  minRows={2}
-                />
-              </Stack>
-            </Paper>
-          ))}
         </Stack>
       </DialogContent>
 
@@ -445,7 +331,6 @@ export default function LoadCarrierManagementPage() {
               <TableCell sx={{ width: 80 }}>ID</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>QR Code</TableCell>
-              <TableCell sx={{ width: 120 }}>Items</TableCell>
               <TableCell sx={{ width: 220 }}>Updated</TableCell>
               <TableCell sx={{ width: 180 }} align="right">
                 Actions
@@ -477,8 +362,6 @@ export default function LoadCarrierManagementPage() {
                 </TableCell>
 
                 <TableCell sx={{ fontFamily: 'monospace' }}>{r.qrCode}</TableCell>
-
-                <TableCell>{r.items?.length ?? 0}</TableCell>
 
                 <TableCell>{isoToReadable(r.updatedAt)}</TableCell>
 

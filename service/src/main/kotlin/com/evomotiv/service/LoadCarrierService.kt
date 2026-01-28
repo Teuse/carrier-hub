@@ -3,7 +3,6 @@ package com.evomotiv.service
 import com.evomotiv.dto.CreateLoadCarrierDto
 import com.evomotiv.dto.UpdateLoadCarrierDto
 import com.evomotiv.mapper.LoadCarrierMapper
-import com.evomotiv.model.Item
 import com.evomotiv.repository.LoadCarrierRepository
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
@@ -18,19 +17,19 @@ class LoadCarrierService(
 ) {
     @Transactional
     fun getAllActive() =
-        repo.findAllActiveWithItems().map(LoadCarrierMapper::toDto)
+        repo.findAllActive().map(LoadCarrierMapper::toDto)
 
     @Transactional
     fun getById(id: Long) =
         LoadCarrierMapper.toDto(
-            repo.findActiveByIdWithItems(id)
+            repo.findActiveById(id)
                 .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Load carrier not found") }
         )
 
     @Transactional
     fun getByQrCode(qrCode: String) =
         LoadCarrierMapper.toDto(
-            repo.findActiveByQrCodeWithItems(qrCode)
+            repo.findActiveByQrCode(qrCode)
                 .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Load carrier not found") }
         )
 
@@ -42,18 +41,6 @@ class LoadCarrierService(
             qrCode = QrCodeGenerator.generate()
         )
 
-        entity.items.clear()
-        dto.items.forEach { itDto ->
-            entity.items.add(
-                Item(
-                    loadCarrier = entity,
-                    name = itDto.name,
-                    description = itDto.description,
-                    count = itDto.count
-                )
-            )
-        }
-
         entity.touch()
         return LoadCarrierMapper.toDto(repo.save(entity))
     }
@@ -64,19 +51,6 @@ class LoadCarrierService(
 
         entity.name = dto.name
         entity.description = dto.description
-
-        // Replace items (simple & safe)
-        entity.items.clear()
-        dto.items.forEach { itDto ->
-            entity.items.add(
-                Item(
-                    loadCarrier = entity,
-                    name = itDto.name,
-                    description = itDto.description,
-                    count = itDto.count
-                )
-            )
-        }
 
         entity.touch()
         return LoadCarrierMapper.toDto(repo.save(entity))

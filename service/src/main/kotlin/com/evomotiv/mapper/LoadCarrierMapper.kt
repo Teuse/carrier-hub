@@ -1,9 +1,7 @@
 package com.evomotiv.mapper
 
-import com.evomotiv.dto.ItemDto
 import com.evomotiv.dto.LoadCarrierDto
 import com.evomotiv.model.LoadCarrier
-import com.evomotiv.model.Item
 
 object LoadCarrierMapper {
 
@@ -16,16 +14,5 @@ object LoadCarrierMapper {
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
             deletedAt = entity.deletedAt,
-            items = entity.items
-                .sortedBy { it.id }
-                .map { it.toDto() }
-        )
-
-    private fun Item.toDto(): ItemDto =
-        ItemDto(
-            id = this.id,
-            name = this.name,
-            description = this.description,
-            count = this.count
         )
 }

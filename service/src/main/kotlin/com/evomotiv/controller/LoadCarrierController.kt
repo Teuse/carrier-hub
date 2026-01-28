@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/load-carriers")
-@Tag(name = "LoadCarriers", description = "CRUD for load carrier templates + items")
+@Tag(name = "LoadCarriers", description = "CRUD for load carrier templates")
 class LoadCarrierController(
     private val service: LoadCarrierService
 ) {

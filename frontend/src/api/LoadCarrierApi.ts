@@ -1,12 +1,5 @@
 import { http } from './http';
 
-export interface ItemDto {
-  id: number;
-  name: string;
-  description?: string;
-  count: number;
-}
-
 export interface LoadCarrierDto {
   id: number;
   name: string;
@@ -15,25 +8,16 @@ export interface LoadCarrierDto {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  items: ItemDto[];
-}
-
-export interface CreateItemDto {
-  name: string;
-  description?: string;
-  count: number;
 }
 
 export interface CreateLoadCarrierDto {
   name: string;
   description?: string;
-  items: CreateItemDto[];
 }
 
 export interface UpdateLoadCarrierDto {
   name: string;
   description?: string;
-  items: CreateItemDto[];
 }
 
 export const LoadCarrierApi = {

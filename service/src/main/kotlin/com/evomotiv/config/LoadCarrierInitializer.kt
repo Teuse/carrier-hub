@@ -1,6 +1,5 @@
 package com.evomotiv.init
 
-import com.evomotiv.model.Item
 import com.evomotiv.model.LoadCarrier
 import com.evomotiv.repository.LoadCarrierRepository
 import com.evomotiv.util.QrCodeGenerator
@@ -30,43 +29,23 @@ class LoadCarrierInitializer {
         val carriers = listOf(
             carrier(
                 name = "Small Parts Carrier",
-                description = "For screws, clips and small components",
-                items = listOf(
-                    ItemSpec("Screws M4", 200),
-                    ItemSpec("Plastic clips", 100)
-                )
+                description = "For screws, clips and small components"
             ),
             carrier(
                 name = "Medium Assembly Carrier",
-                description = "Standard assembly load carrier",
-                items = listOf(
-                    ItemSpec("Brackets", 20),
-                    ItemSpec("Bolts M8", 50)
-                )
+                description = "Standard assembly load carrier"
             ),
             carrier(
                 name = "Electrical Components Carrier",
-                description = "Sensitive electrical components",
-                items = listOf(
-                    ItemSpec("Wiring harness", 10),
-                    ItemSpec("Control units", 5)
-                )
+                description = "Sensitive electrical components"
             ),
             carrier(
                 name = "Heavy Parts Carrier",
-                description = "Heavy mechanical parts",
-                items = listOf(
-                    ItemSpec("Gear housing", 2),
-                    ItemSpec("Drive shafts", 4)
-                )
+                description = "Heavy mechanical parts"
             ),
             carrier(
                 name = "Mixed Kit Carrier",
-                description = "Pre-packed mixed assembly kit",
-                items = listOf(
-                    ItemSpec("Assembly kit A", 1),
-                    ItemSpec("Assembly kit B", 1)
-                )
+                description = "Pre-packed mixed assembly kit"
             )
         )
 
@@ -76,34 +55,14 @@ class LoadCarrierInitializer {
 
     /* ====================================================== */
 
-    private data class ItemSpec(
-        val name: String,
-        val count: Int,
-        val description: String? = null
-    )
-
     private fun carrier(
         name: String,
         description: String,
-        items: List<ItemSpec>
     ): LoadCarrier {
-        val lc = LoadCarrier(
+        return LoadCarrier(
             name = name,
             description = description,
             qrCode = QrCodeGenerator.generate()
         )
-
-        items.forEach { spec ->
-            lc.items.add(
-                Item(
-                    loadCarrier = lc,
-                    name = spec.name,
-                    description = spec.description,
-                    count = spec.count
-                )
-            )
-        }
-
-        return lc
     }
 }

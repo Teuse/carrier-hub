@@ -18,20 +18,6 @@ CREATE TABLE load_carrier (
     deleted_at TIMESTAMP
 );
 
-CREATE TABLE item (
-    id BIGSERIAL PRIMARY KEY,
-    load_carrier_id BIGINT NOT NULL,
-
-    name TEXT NOT NULL,
-    description TEXT,
-    count INTEGER NOT NULL,
-
-    CONSTRAINT fk_item_load_carrier
-        FOREIGN KEY (load_carrier_id)
-        REFERENCES load_carrier(id)
-        ON DELETE CASCADE
-);
-
 -- Load Carrier Requests
 CREATE TABLE load_carrier_request (
     id BIGSERIAL PRIMARY KEY,
@@ -56,6 +42,5 @@ CREATE TABLE load_carrier_request (
 );
 
 -- Indexes (recommended)
-CREATE INDEX idx_request_workbench_id ON load_carrier_request(workbench_id);
-CREATE INDEX idx_request_status ON load_carrier_request(status);
-CREATE INDEX idx_item_load_carrier_id ON item(load_carrier_id);
+--CREATE INDEX idx_request_workbench_id ON load_carrier_request(workbench_id);
+--CREATE INDEX idx_request_status ON load_carrier_request(status);

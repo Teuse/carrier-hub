@@ -26,15 +26,7 @@ class LoadCarrier(
     var updatedAt: Instant = Instant.now(),
 
     @Column(name = "deleted_at")
-    var deletedAt: Instant? = null,
-
-    @OneToMany(
-        mappedBy = "loadCarrier",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    var items: MutableList<Item> = mutableListOf()
+    var deletedAt: Instant? = null
 ) {
 
     fun touch() {
