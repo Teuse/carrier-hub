@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 class LoadCarrierController(
     private val service: LoadCarrierService
 ) {
-
     @GetMapping
     fun getAllActive() = service.getAllActive()
 

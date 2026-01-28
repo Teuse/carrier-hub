@@ -15,3 +15,9 @@ data class LoadCarrierRequestDto(
     val createdAt: Instant,
     val deliveredAt: Instant?
 )
+
+data class CreateLoadCarrierRequestDto(
+    val loadCarrierId: Long,
+    val comment: String? = null,
+    val priority: RequestPriority
+)

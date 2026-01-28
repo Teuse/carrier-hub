@@ -46,13 +46,23 @@ export default function Header() {
         <Box sx={{ flexGrow: 1 }} />
 
         <Button
+          onClick={() => navigate("/anomalies")}
+          sx={{
+            color: isActive("/anomalies") ? "primary.main" : "#ffffff",
+            fontWeight: isActive("/anomalies") ? 600 : 400,
+          }}
+        >
+          Anomalies
+        </Button>
+
+        <Button
           onClick={() => navigate("/workbench")}
           sx={{
             color: isActive("/workbench") ? "primary.main" : "#ffffff",
             fontWeight: isActive("/workbench") ? 600 : 400,
           }}
         >
-          Work Bench
+          Workspace
         </Button>
 
         <Button

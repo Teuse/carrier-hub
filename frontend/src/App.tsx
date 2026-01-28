@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import WorkBenchPage from "./pages/WorkBenchPage";
 import LogisticsPage from "./pages/LogisticsPage";
 import WarehousePage from "./pages/WarehousePage";
+import AnomaliesPage from "./pages/AnomaliesPage";
 import WorkbenchManagementPage from "./pages/WorkbenchManagementPage";
 import LoadCarrierManagementPage from './pages/LoadCarrierManagementPage';
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -29,6 +30,7 @@ export default function App() {
             >
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/anomalies" element={<AnomaliesPage />} />
                 <Route path="/workbench" element={<WorkBenchPage />} />
                 <Route path="/logistics" element={<LogisticsPage />} />
                 <Route path="/warehouse" element={<WarehousePage />} />

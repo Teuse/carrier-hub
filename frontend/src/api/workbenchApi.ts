@@ -3,6 +3,9 @@ import type {
   WorkbenchDto,
   LoadCarrierRequestDto,
   CreateLoadCarrierRequestDto,
+  AnomalyDto,
+  CreateAnomalyDto,
+  UpdateAnomalyDto,
 } from './types';
 
 export const WorkbenchApi = {
@@ -28,6 +31,33 @@ export const WorkbenchApi = {
       body: JSON.stringify(payload),
     }),
 
+  getAllAnomalies: (): Promise<AnomalyDto[]> =>
+    http('/api/anomalies'),
+
+  getAnomalies: (
+    workbenchId: number
+  ): Promise<AnomalyDto[]> =>
+    http(`/api/workbenches/${workbenchId}/anomalies`),
+
+  reportAnomaly: (
+    workbenchId: number,
+    payload: CreateAnomalyDto
+  ): Promise<AnomalyDto> =>
+    http(`/api/workbenches/${workbenchId}/anomalies`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }),
+
+  updateAnomaly: (
+    anomalyId: number,
+    payload: UpdateAnomalyDto
+  ): Promise<AnomalyDto> =>
+    http(`/api/anomalies/${anomalyId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+  }),
   /* ===================================================== */
   /* Management / Admin                                   */
   /* ===================================================== */

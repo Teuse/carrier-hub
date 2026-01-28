@@ -48,3 +48,32 @@ export interface CreateLoadCarrierRequestDto {
   comment?: string;
   priority: string;
 }
+
+export interface AnomalyDto {
+  id: number;
+  van?: string;
+  pn?: string;
+  kz?: string;
+  notes?: string;
+  workbench: WorkbenchDto;
+  status: AnomalyStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export type AnomalyStatus =
+  | 'REPORTED'
+  | 'DECLINED_BY_PQ'
+  | 'ACCEPTED_BY_PQ';
+
+export interface CreateAnomalyDto {
+  van?: string;
+  pn?: string;
+  kz?: string;
+  notes?: string;
+}
+
+export interface UpdateAnomalyDto {
+  status?: AnomalyStatus;
+  notes?: string;
+}

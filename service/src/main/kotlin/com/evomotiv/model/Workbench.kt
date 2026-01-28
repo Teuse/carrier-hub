@@ -19,6 +19,13 @@ data class Workbench(
     val name: String,
 
     val description: String? = null,
+    val active: Boolean = true,
 
-    val active: Boolean = true
+    @OneToMany(
+        mappedBy = "workbench",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    val anomalies: MutableList<Anomaly> = mutableListOf()
 )

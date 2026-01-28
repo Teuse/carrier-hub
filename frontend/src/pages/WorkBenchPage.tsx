@@ -12,15 +12,18 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import WorkbenchSelector from "../components/WorkbenchSelector";
 import RequestLoadCarrierDialog from "../components/RequestLoadCarrierDialog";
-import QrRequestDialog from "../components/QrRequestDialog";
 import RequestTable from "../components/RequestTable";
+import ReportAnomalyDialog from "../components/ReportAnomalyDialog";
 
 import { WorkbenchApi } from "../api";
 import type {
   LoadCarrierRequestDto,
   WorkbenchDto,
   RequestPriority,
+  AnomalyDto,
+  CreateAnomalyDto,
 } from "../api";
+import AnomalyTable from "../components/AnomalyTable";
 
 /* ====================================================== */
 
@@ -46,9 +49,12 @@ export default function WorkbenchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /* ---------- anomalies ---------- */
+  const [anomalies, setAnomalies] = useState<AnomalyDto[]>([]);
+  const [anomalyDialogOpen, setAnomalyDialogOpen] = useState(false);
+
   /* ---------- dialogs ---------- */
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
-  const [qrDialogOpen, setQrDialogOpen] = useState(false);
 
   /* ====================================================== */
 
@@ -73,6 +79,8 @@ export default function WorkbenchPage() {
   const hasOpenRequest = activeRequests.length > 0;
 
   /* ====================================================== */
+  /* Initial load                                           */
+  /* ====================================================== */
 
   useEffect(() => {
     WorkbenchApi.getActive().then(setWorkbenches);
@@ -81,9 +89,14 @@ export default function WorkbenchPage() {
   useEffect(() => {
     if (selectedWorkbenchId) {
       loadRequests(selectedWorkbenchId);
+      loadAnomalies(selectedWorkbenchId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWorkbenchId]);
+
+  /* ====================================================== */
+  /* Loaders                                                */
+  /* ====================================================== */
 
   const loadRequests = async (workbenchId: number) => {
     setIsLoading(true);
@@ -99,8 +112,17 @@ export default function WorkbenchPage() {
     }
   };
 
+  const loadAnomalies = async (workbenchId: number) => {
+    try {
+      const data = await WorkbenchApi.getAnomalies(workbenchId);
+      setAnomalies(data);
+    } catch {
+      setError("Failed to load anomalies");
+    }
+  };
+
   /* ====================================================== */
-  /* Request creation (template-based)                       */
+  /* Create request                                         */
   /* ====================================================== */
 
   const createRequest = async (payload: {
@@ -113,17 +135,33 @@ export default function WorkbenchPage() {
     setIsLoading(true);
     setError(null);
 
-    console.log("Creating request with payload:", payload);
-
     try {
       await WorkbenchApi.requestNew(selectedWorkbenchId, payload);
-
       setRequestDialogOpen(false);
-      setQrDialogOpen(false);
-
       await loadRequests(selectedWorkbenchId);
     } catch {
       setError("Failed to create request");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /* ====================================================== */
+  /* Create anomaly                                         */
+  /* ====================================================== */
+
+  const createAnomaly = async (payload: CreateAnomalyDto) => {
+    if (!selectedWorkbenchId) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await WorkbenchApi.reportAnomaly(selectedWorkbenchId, payload);
+      setAnomalyDialogOpen(false);
+      await loadAnomalies(selectedWorkbenchId);
+    } catch {
+      setError("Failed to report anomaly");
     } finally {
       setIsLoading(false);
     }
@@ -176,12 +214,12 @@ export default function WorkbenchPage() {
             </Button>
 
             <Button
-              sx={{ width: 96, fontSize: 18 }}
+              sx={{ width: 400, fontSize: 18 }}
               variant="outlined"
-              disabled={hasOpenRequest || isLoading}
-              onClick={() => setQrDialogOpen(true)}
+              disabled={isLoading}
+              onClick={() => setAnomalyDialogOpen(true)}
             >
-              QR
+              Report Anomaly
             </Button>
           </Stack>
         )}
@@ -202,6 +240,7 @@ export default function WorkbenchPage() {
               requests={historyRequests}
               isHistory={() => true}
             />
+            <AnomalyTable title="Reported Anomalies" anomalies={anomalies} />
           </>
         )}
       </Box>
@@ -214,11 +253,11 @@ export default function WorkbenchPage() {
         isLoading={isLoading}
       />
 
-      <QrRequestDialog
-        open={qrDialogOpen}
+      <ReportAnomalyDialog
+        open={anomalyDialogOpen}
         isLoading={isLoading}
-        onClose={() => setQrDialogOpen(false)}
-        onSubmit={createRequest}
+        onClose={() => setAnomalyDialogOpen(false)}
+        onSubmit={createAnomaly}
       />
     </Box>
   );

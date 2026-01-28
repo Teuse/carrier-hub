@@ -1,7 +1,8 @@
 package com.evomotiv.service
 
 import com.evomotiv.dto.CreateLoadCarrierRequestDto
-import com.evomotiv.mapper.LoadCarrierRequestMapper
+import com.evomotiv.dto.LoadCarrierRequestDto
+import com.evomotiv.mapper.toDto
 import org.springframework.stereotype.Service
 import com.evomotiv.repository.LoadCarrierRequestRepository
 import com.evomotiv.repository.WorkbenchRepository
@@ -19,13 +20,13 @@ class LoadCarrierRequestService(
     private val loadCarrierRepository: LoadCarrierRepository
 ) {
 
-    fun getAll(): List<LoadCarrierRequest> =
-        requestRepository.findAll()
+    fun getAll(): List<LoadCarrierRequestDto> =
+        requestRepository.findAll().map{ it.toDto() }
 
-    fun getByWorkbench(workbenchId: Long): List<LoadCarrierRequest> =
-        requestRepository.findByWorkbenchId(workbenchId)
+    fun getByWorkbench(workbenchId: Long): List<LoadCarrierRequestDto> =
+        requestRepository.findByWorkbenchId(workbenchId).map { it.toDto() }
 
-    fun createRequest(workbenchId: Long, dto: CreateLoadCarrierRequestDto): LoadCarrierRequest {
+    fun createRequest(workbenchId: Long, dto: CreateLoadCarrierRequestDto): LoadCarrierRequestDto {
         val workbench = workbenchRepository.findById(workbenchId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Workbench not found") }
 
@@ -42,10 +43,10 @@ class LoadCarrierRequestService(
             priority = dto.priority
         )
 
-        return requestRepository.save(entity)
+        return requestRepository.save(entity).toDto()
     }
 
-    fun advanceStatus(id: Long): LoadCarrierRequest {
+    fun advanceStatus(id: Long): LoadCarrierRequestDto {
         val request = requestRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Request not found") }
 
@@ -67,6 +68,6 @@ class LoadCarrierRequestService(
         }
 
         request.deliveredAt = Instant.now()
-        return requestRepository.save(request)
+        return requestRepository.save(request).toDto()
     }
 }
