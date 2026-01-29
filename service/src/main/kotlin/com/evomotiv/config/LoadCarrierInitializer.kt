@@ -1,4 +1,4 @@
-package com.evomotiv.init
+package com.evomotiv.config
 
 import com.evomotiv.model.LoadCarrier
 import com.evomotiv.repository.LoadCarrierRepository
