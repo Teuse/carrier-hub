@@ -6,6 +6,26 @@ CREATE TABLE workbench (
     active BOOLEAN NOT NULL DEFAULT true
 );
 
+CREATE UNIQUE INDEX ux_workbench_name ON workbench(name);
+
+-- Anomalies
+CREATE TABLE anomaly (
+    id BIGSERIAL PRIMARY KEY,
+    van TEXT,
+    pn TEXT,
+    kz TEXT,
+    notes TEXT,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+
+    workbench_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_anomaly_workbench
+        FOREIGN KEY (workbench_id)
+        REFERENCES workbench(id)
+);
+
 -- Load carrier templates (predefined)
 CREATE TABLE load_carrier (
     id BIGSERIAL PRIMARY KEY,

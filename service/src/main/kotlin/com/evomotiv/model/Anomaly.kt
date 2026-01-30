@@ -6,7 +6,7 @@ import java.time.Instant
 
 @Entity
 @Table(name = "anomaly")
-class Anomaly (
+data class Anomaly (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -27,6 +27,6 @@ class Anomaly (
     @Column(name = "created_at", nullable = false)
     val createdAt: Instant = Instant.now(),
 
-    @Column(name = "delivered_at")
+    @Column(name = "updated_at")
     var updatedAt: Instant? = null,
 )

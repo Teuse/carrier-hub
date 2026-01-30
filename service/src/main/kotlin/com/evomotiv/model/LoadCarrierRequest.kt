@@ -5,7 +5,7 @@ import java.time.Instant
 
 @Entity
 @Table(name = "load_carrier_request")
-class LoadCarrierRequest(
+data class LoadCarrierRequest(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
