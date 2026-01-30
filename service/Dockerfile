@@ -1,21 +1,21 @@
 # ======================================================
 # 1) Build Stage
 # ======================================================
-FROM gradle:8.6-jdk17 AS builder
+FROM gradle:9.2.1-jdk21 AS builder
 
 WORKDIR /app
 
-COPY gradlew ./
-COPY gradle ./gradle
-COPY build.gradle.kts settings.gradle.kts ./
+COPY gradlew .
+COPY gradle/ ./gradle
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY src/ ./src
 
 RUN chmod +x ./gradlew
 
-RUN ./gradlew dependencies --no-daemon || true
+#RUN ./gradlew dependencies --no-daemon || true
 
-COPY src ./src
-
-RUN ./gradlew bootJar --no-daemon
+RUN ./gradlew build --info
 
 # ======================================================
 # 2) Runtime Stage
@@ -32,7 +32,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
-ENV SPRING_PROFILES_ACTIVE=prod
-
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
