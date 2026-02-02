@@ -5,6 +5,10 @@ FROM gradle:9.2.1-jdk21 AS builder
 
 WORKDIR /app
 
+# env-variables are not acessible at build-time. So I need to set it manually
+ARG SPRING_PROFILES_ACTIVE=prod 
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+
 COPY gradlew .
 COPY gradle/ ./gradle
 COPY build.gradle.kts .
@@ -15,7 +19,7 @@ RUN chmod +x ./gradlew
 
 #RUN ./gradlew dependencies --no-daemon || true
 
-RUN ./gradlew build --info
+RUN ./gradlew clean build -x test
 
 # ======================================================
 # 2) Runtime Stage

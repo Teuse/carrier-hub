@@ -7,24 +7,18 @@ services:
       - postgres
     env_file:
       - .env
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
     ports:
       - "8080:8080"
 
   postgres:
-    image: postgres:16
+    image: postgres:18
     container_name: database
     env_file:
       - .env
-    environment:
-      POSTGRES_DB: service
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ddb_pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - carrier-hub-data:/var/lib/pg-ddb/data
 
 volumes:
-  ddb_pgdata:
+  carrier-hub-data:
