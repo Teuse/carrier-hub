@@ -1,4 +1,18 @@
 services:
+  frontent:
+    build: 
+      context: ./frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_SECURITY_USER_NAME=${SECURITY_USER_NAME}
+        - VITE_SECURITY_USER_PASSWORD=${SECURITY_USER_PASSWORD}
+    container_name: frontend
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    ports:
+      - "80:80"
 
   backend:
     build: ./service
