@@ -1,6 +1,6 @@
-const API_BASE = 'http://localhost:8080';
-const USER = 'api';
-const PASS = 'secret';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const USER = import.meta.env.VITE_SECURITY_USER_NAME || 'api';
+const PASS = import.meta.env.VITE_SECURITY_USER_PASSWORD || 'secret';
 
 const authHeader = `Basic ${btoa(`${USER}:${PASS}`)}`;
 
