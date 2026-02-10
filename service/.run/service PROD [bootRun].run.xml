@@ -1,14 +1,16 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="service [bootRun]" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="service PROD [bootRun]" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="CLIENT_ID" value="afa6c3b8-8c6b-411c-b050-1c4282f761bd" />
           <entry key="DB_PASSWORD" value="pw" />
           <entry key="DB_USER" value="pg" />
           <entry key="SECURITY_USER_NAME" value="api" />
           <entry key="SECURITY_USER_PASSWORD" value="secret" />
           <entry key="SPRING_DATASOURCE_URL" value="jdbc:postgresql://localhost:5432/ddb" />
           <entry key="SPRING_PROFILES_ACTIVE" value="prod" />
+          <entry key="TENANT_ID" value="fe55f525-5cd1-4335-9b41-8e3e2ff08d0e" />
         </map>
       </option>
       <option name="executionName" />
