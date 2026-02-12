@@ -1,6 +1,6 @@
 package com.evomotiv.config
 
-import com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -8,6 +8,13 @@ import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
+import org.springframework.security.oauth2.jwt.JwtClaimValidator
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtDecoders
+import org.springframework.security.oauth2.jwt.JwtValidators
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -30,6 +37,12 @@ class SecurityConfig {
         "/api/anomalies/**",
     )
 
+    @Value("\${TENANT_ID}")
+    private lateinit var tenantId: String
+    
+    @Value("\${CLIENT_ID}")
+    private lateinit var clientId: String
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.cors(Customizer.withDefaults())
@@ -39,14 +52,38 @@ class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, *userAuthorizedEndpoints).hasRole("USER")
                     .requestMatchers("/api/**").hasRole("ADMIN")
                     .anyRequest().denyAll()
-            }.with(AadWebApplicationHttpSecurityConfigurer.aadWebApplication(), Customizer.withDefaults())
+            }.oauth2ResourceServer { it.jwt(Customizer.withDefaults())
+            }.sessionManagement { session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }.cors(Customizer.withDefaults())
+         
+            return http.build()
+        }
 
-        return http.build()
-    }
-
+    // might need to add custom CORS logic with a @Bean fun corsConfigurationSource(): CorsConfigurationSource {}
+    
     @Bean
     @RequestScope
     fun urlBuilder(): ServletUriComponentsBuilder {
         return ServletUriComponentsBuilder.fromCurrentRequest()
+    }
+
+    @Bean
+    fun jwtDecoder(): JwtDecoder {
+        // not sure if needed.
+        val jwtDecoder = JwtDecoders.fromIssuerLocation<JwtDecoder>(
+            "https://login.microsoftonline.com/${tenantId}/v2.0"
+        ) as NimbusJwtDecoder
+        
+        jwtDecoder.setJwtValidator(
+            DelegatingOAuth2TokenValidator(
+                JwtValidators.createDefaultWithIssuer("https://login.microsoftonline.com/${tenantId}/v2.0"),
+                JwtClaimValidator<List<String>>("aud") { aud ->
+                    aud.contains("api://${clientId}")
+                }
+            )
+        )
+        
+        return jwtDecoder
     }
 }
