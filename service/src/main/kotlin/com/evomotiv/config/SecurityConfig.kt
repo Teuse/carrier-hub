@@ -9,19 +9,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
-import org.springframework.security.oauth2.jwt.JwtClaimValidator
-import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtDecoders
-import org.springframework.security.oauth2.jwt.JwtValidators
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 class SecurityConfig {
     /* Explicitly add the endpoints to secure here. Rule of thumb for this PoC:
@@ -60,30 +56,23 @@ class SecurityConfig {
             return http.build()
         }
 
-    // might need to add custom CORS logic with a @Bean fun corsConfigurationSource(): CorsConfigurationSource {}
-    
+    @Bean
+    fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+        val grantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter().apply {
+            // Remove the SCOPE_ prefix
+            setAuthorityPrefix("")
+            // Look for scopes in the "scp" claim (default for Entra ID)
+            setAuthoritiesClaimName("scp")
+        }
+
+        return JwtAuthenticationConverter().apply {
+            setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter)
+        }
+    }
+
     @Bean
     @RequestScope
     fun urlBuilder(): ServletUriComponentsBuilder {
         return ServletUriComponentsBuilder.fromCurrentRequest()
-    }
-
-    @Bean
-    fun jwtDecoder(): JwtDecoder {
-        // not sure if needed.
-        val jwtDecoder = JwtDecoders.fromIssuerLocation<JwtDecoder>(
-            "https://login.microsoftonline.com/${tenantId}/v2.0"
-        ) as NimbusJwtDecoder
-        
-        jwtDecoder.setJwtValidator(
-            DelegatingOAuth2TokenValidator(
-                JwtValidators.createDefaultWithIssuer("https://login.microsoftonline.com/${tenantId}/v2.0"),
-                JwtClaimValidator<List<String>>("aud") { aud ->
-                    aud.contains("api://${clientId}")
-                }
-            )
-        )
-        
-        return jwtDecoder
     }
 }

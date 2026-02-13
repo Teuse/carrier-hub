@@ -19,7 +19,7 @@ class CorsConfig {
         }
 
         return UrlBasedCorsConfigurationSource().apply {
-            registerCorsConfiguration("/api/**", config)
+            registerCorsConfiguration("/**", config)
         }
     }
 }
