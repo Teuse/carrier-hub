@@ -1,8 +1,6 @@
-import { Box, Button, TextField, Paper, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { loginRequest } from '../authConfig';
-import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import { Box, Button, Paper, Typography } from '@mui/material';
+import { loginRequest } from '../auth';
+import { useMsal } from '@azure/msal-react';
 
 export default function LoginPage() {
   const { instance } = useMsal();

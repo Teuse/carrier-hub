@@ -1,13 +1,37 @@
+import type { Configuration, PopupRequest } from "@azure/msal-browser";
 import { msalInstance } from './main';
-import { loginRequest } from './authConfig';
 
-// Check if user is authenticated
-export function isAuthenticated(): boolean {
-  const accounts = msalInstance.getAllAccounts();
-  return accounts.length > 0;
+// Validate environment variables
+const requiredVars = {
+  VITE_AZURE_TENANT_ID: import.meta.env.VITE_AZURE_TENANT_ID,
+  VITE_AZURE_FRONTEND_CLIENT_ID: import.meta.env.VITE_AZURE_FRONTEND_CLIENT_ID,
+  VITE_AZURE_BACKEND_CLIENT_ID: import.meta.env.VITE_AZURE_BACKEND_CLIENT_ID,
+  VITE_REDIRECT_URI: import.meta.env.VITE_REDIRECT_URI
+};
+
+const missing = Object.entries(requiredVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => key);
+
+if (missing.length > 0) {
+  throw new Error(`Missing environment variables: ${missing.join(', ')}`);
 }
 
-// Get current user information
+export const msalConfig: Configuration = {
+  auth: {
+    clientId: import.meta.env.VITE_AZURE_FRONTEND_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
+    redirectUri: import.meta.env.VITE_REDIRECT_URI,
+  },
+  cache: {
+    cacheLocation: "sessionStorage",
+  },
+};
+
+export const loginRequest: PopupRequest = {
+  scopes: [`api://${import.meta.env.VITE_AZURE_BACKEND_CLIENT_ID}/access_as_user`],
+}
+
 export function getUser() {
   const accounts = msalInstance.getAllAccounts();
   
@@ -15,26 +39,9 @@ export function getUser() {
     return null;
   }
 
-  const account = accounts[0];
-  
-  // Return user object in similar format to your old dummy user
-  return {
-    email: account.username, // Usually the email/UPN
-    name: account.name || account.username, // Display name
-    id: account.localAccountId, // Unique user ID
-    tenantId: account.tenantId,
-    // If you need avatar, you can use Microsoft Graph API or a default
-    avatar: 'https://i.pravatar.cc/40', // Or fetch from Graph API
-  };
+  return accounts[0];
 }
 
-// Get current user account object (full MSAL account info)
-export function getCurrentUser() {
-  const accounts = msalInstance.getAllAccounts();
-  return accounts.length > 0 ? accounts[0] : null;
-}
-
-// Login with redirect
 export async function login(): Promise<void> {
   try {
     await msalInstance.loginRedirect(loginRequest);
@@ -44,7 +51,6 @@ export async function login(): Promise<void> {
   }
 }
 
-// Logout with redirect
 export async function logout(): Promise<void> {
   try {
     await msalInstance.logoutRedirect();
@@ -53,31 +59,3 @@ export async function logout(): Promise<void> {
     throw error;
   }
 }
-
-// Get access token for API calls
-export async function getAccessToken(): Promise<string> {
-  const accounts = msalInstance.getAllAccounts();
-  
-  if (accounts.length === 0) {
-    throw new Error("No active account! Please sign in.");
-  }
-
-  const request = {
-    ...loginRequest,
-    account: accounts[0],
-  };
-
-  try {
-    const response = await msalInstance.acquireTokenSilent(request);
-    return response.accessToken;
-  } catch (error) {
-    console.warn("Silent token acquisition failed, acquiring token using redirect");
-    await msalInstance.acquireTokenRedirect(request);
-    throw new Error("Redirecting to acquire token");
-  }
-}
-
-
-
-
-// this was copy and pasted as is from Claude. NEEDS REWORK AND CLEANUP!!!!!!!!!!!!!!

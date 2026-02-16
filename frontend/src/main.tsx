@@ -6,12 +6,10 @@ import { MsalProvider } from '@azure/msal-react'
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import App from './App';
-import { msalConfig } from './authConfig'
+import { msalConfig } from './auth'
 
 // Create MSAL instance
 export const msalInstance = new PublicClientApplication(msalConfig);
-
-// Initialize MSAL
 await msalInstance.initialize();
 
 // Handle redirect after login

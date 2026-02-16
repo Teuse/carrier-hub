@@ -1,7 +1,7 @@
 import { msalInstance } from '../main';
-import { loginRequest } from '../authConfig';
+import { loginRequest } from '../auth';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export async function http<T>(
   url: string,

@@ -94,7 +94,7 @@ export default function Header() {
           open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
         >
-          <MenuItem disabled>{user.email}</MenuItem>
+          <MenuItem disabled>{user?.username}</MenuItem>
 
           <Divider />
 
