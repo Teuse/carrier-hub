@@ -1,26 +1,23 @@
 import { Box, Button, TextField, Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../auth';
+import { useState } from 'react';
+import { loginRequest } from '../authConfig';
+import { useIsAuthenticated, useMsal } from '@azure/msal-react';
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const { instance } = useMsal();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    login(String(data.get('email') ?? ''));
-    navigate('/');
+  const handleLogin = () => {
+    instance.loginRedirect(loginRequest);
   };
 
+  
   return (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Paper sx={{ p: 4, width: 320 }}>
         <Typography variant="h6" gutterBottom>IVECO Login</Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <TextField name="email" label="Email" fullWidth margin="normal" />
-          <TextField name="password" label="Password" type="password" fullWidth margin="normal" />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>Login</Button>
-        </Box>
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleLogin}>
+          Login with Microsoft</Button>
       </Paper>
     </Box>
   );

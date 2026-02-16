@@ -19,8 +19,8 @@ POSTGRES_USER=${DB_USER}
 POSTGRES_PASSWORD=${DB_PASSWORD}
 VITE_API_URL=http://localhost:8080
 
-CLIENT_ID=<your-Azure-AD-client-ID>
-TENANT_ID=<your-Azure-AD-Tenant-ID>
+AZURE_BACKEND_CLIENT_ID=<your-Azure-AD-backend-client-ID>
+AZURE_TENANT_ID=<your-Azure-AD-Tenant-ID>
 CARRIER_HUB_CLIENT_SECRET=<your-Azure-AD-client-secret>
 ```
 
