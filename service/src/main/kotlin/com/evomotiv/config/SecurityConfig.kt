@@ -9,8 +9,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -33,10 +34,10 @@ class SecurityConfig {
         "/api/anomalies/**",
     )
 
-    @Value("\${TENANT_ID}")
+    @Value("\${AZURE_TENANT_ID}")
     private lateinit var tenantId: String
     
-    @Value("\${CLIENT_ID}")
+    @Value("\${AZURE_BACKEND_CLIENT_ID}")
     private lateinit var clientId: String
 
     @Bean
@@ -45,29 +46,36 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
-                    .requestMatchers(HttpMethod.GET, *userAuthorizedEndpoints).hasRole("USER")
+                    .requestMatchers(HttpMethod.GET, *userAuthorizedEndpoints).hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/api/**").hasRole("ADMIN")
                     .anyRequest().denyAll()
-            }.oauth2ResourceServer { it.jwt(Customizer.withDefaults())
-            }.sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }.cors(Customizer.withDefaults())
+            }
+            .oauth2ResourceServer { it.jwt(Customizer.withDefaults()) }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
          
-            return http.build()
-        }
+        return http.build()
+    }
 
     @Bean
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
-        val grantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter().apply {
-            // Remove the SCOPE_ prefix
-            setAuthorityPrefix("")
-            // Look for scopes in the "scp" claim (default for Entra ID)
-            setAuthoritiesClaimName("scp")
-        }
+        val converter = JwtAuthenticationConverter()
+        converter.setJwtGrantedAuthoritiesConverter { jwt ->
+            val authorities = mutableListOf<GrantedAuthority>()
 
-        return JwtAuthenticationConverter().apply {
-            setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter)
+            // Extract scopes - these confirm the app has API access
+            jwt.getClaimAsString("scp")?.split(" ")?.forEach { scope ->
+                authorities.add(SimpleGrantedAuthority("SCOPE_$scope"))
+            }
+
+            // Extract role and prefix "ROLE_" as needed by spring security
+            val roles = jwt.getClaimAsStringList("roles") ?: emptyList()
+            roles.forEach { role ->
+                authorities.add(SimpleGrantedAuthority("ROLE_$role"))
+            }
+
+            authorities
         }
+        return converter
     }
 
     @Bean
