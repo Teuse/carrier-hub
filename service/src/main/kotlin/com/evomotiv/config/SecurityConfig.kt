@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfig {
     /* Explicitly add the endpoints to secure here. Rule of thumb for this PoC:
