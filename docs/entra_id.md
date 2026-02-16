@@ -18,7 +18,7 @@ This step-by-step is for someone who has permissions to register a new applicati
 - Open the [Azure Portal](https://portal.azure.com/#home) and navigate to [App-Registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)
 - Click on "New Registration"
     - Under Account-types select "only accounts in organizational structure" (german: "Nur Konten in diesem Organisationsverzeichnis")
-    - Under Redirect URI select as platform "Web" and add a redirect URI, e.g. `http://localhost:8080/login/oauth2/code/` (port 8080 for backend, for frontend you could use 5173)
+    - Under Redirect URI select as platform "Single-Page Application" and add a redirect URI, e.g. `http://localhost:8080/login/oauth2/code/` (port 8080 for backend, for frontend you could use 5173 and `/dashboard/overview` as path)
 - Click "Register"
 - Give your application a meaningful name
 - You will then be presented with your application IDs. You need the Client-ID (german: "Anwendungs-ID (Client)"), Tenant-ID (german: "Verzeichnis-ID (Mandant)")
