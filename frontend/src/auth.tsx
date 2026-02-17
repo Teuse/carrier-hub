@@ -1,6 +1,5 @@
 import type { Configuration, PopupRequest } from "@azure/msal-browser";
 import { msalInstance } from './main';
-import { useMsal } from "@azure/msal-react";
 
 // Validate environment variables
 const requiredVars = {
@@ -63,7 +62,6 @@ export async function isAdmin(): Promise<boolean> {
   }
 
   type Role = "USER" | "ADMIN";
-  
   const account = getUser();
 
   const response = await msalInstance.acquireTokenSilent({
