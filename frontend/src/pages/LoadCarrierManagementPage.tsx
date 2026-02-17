@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
@@ -34,6 +35,8 @@ import {
   type CreateLoadCarrierDto,
   type UpdateLoadCarrierDto,
 } from '../api/LoadCarrierApi';
+import { isAdmin } from '../auth';
+
 
 /* ====================================================== */
 /* Small helpers                                           */
@@ -42,7 +45,6 @@ import {
 type Mode = 'create' | 'edit';
 
 function isoToReadable(iso: string): string {
-  // simple readable timestamp; keep it deterministic
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleString();
@@ -76,17 +78,20 @@ function LoadCarrierEditDialog(props: {
   mode: Mode;
   initial?: LoadCarrierDto;
   isLoading: boolean;
+  admin: boolean;
   onClose: () => void;
   onSubmit: (payload: CreateLoadCarrierDto | UpdateLoadCarrierDto) => void;
 }) {
-  const { open, mode, initial, isLoading, onClose, onSubmit } = props;
+  const { open, mode, initial, isLoading, admin, onClose, onSubmit } = props;
   const [form, setForm] = useState<EditFormState>(() => toEditFormState(initial));
 
   useEffect(() => {
     if (open) setForm(toEditFormState(initial));
   }, [open, initial]);
 
-  const title = mode === 'create' ? 'Create Load Carrier' : 'Edit Load Carrier';
+  const title = mode === 'create'
+    ? admin ? 'Create Load Carrier' : 'Create Load Carrier (Admins only)'
+    : admin ? 'Edit Load Carrier' : 'Edit Load Carrier (Admins only)';
 
   const submit = () => {
     const payload = {
@@ -94,7 +99,6 @@ function LoadCarrierEditDialog(props: {
       description: form.description.trim() || undefined,
       qrCode: form.qrCode.trim(),
     };
-
     onSubmit(payload);
   };
 
@@ -102,10 +106,7 @@ function LoadCarrierEditDialog(props: {
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ pr: 6 }}>
         {title}
-        <IconButton
-          onClick={onClose}
-          sx={{ position: 'absolute', top: 8, right: 8 }}
-        >
+        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -123,9 +124,7 @@ function LoadCarrierEditDialog(props: {
           <TextField
             label="Description"
             value={form.description}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, description: e.target.value }))
-            }
+            onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
             fullWidth
             multiline
             minRows={2}
@@ -141,7 +140,7 @@ function LoadCarrierEditDialog(props: {
         <Button
           variant="contained"
           onClick={submit}
-          disabled={!isValidForm(form) || isLoading}
+          disabled={!isValidForm(form) || isLoading || !admin}
         >
           {mode === 'create' ? 'Create' : 'Save'}
         </Button>
@@ -166,10 +165,7 @@ function QrCodeDialog(props: {
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle sx={{ pr: 6 }}>
         {title}
-        <IconButton
-          onClick={onClose}
-          sx={{ position: 'absolute', top: 8, right: 8 }}
-        >
+        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -202,6 +198,7 @@ export default function LoadCarrierManagementPage() {
   const [rows, setRows] = useState<LoadCarrierDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [admin, setAdmin] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editMode, setEditMode] = useState<Mode>('create');
@@ -212,11 +209,14 @@ export default function LoadCarrierManagementPage() {
   const [qrTitle, setQrTitle] = useState('');
 
   const sorted = useMemo(() => {
-    // newest updated first
     return [...rows].sort(
       (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
   }, [rows]);
+
+  useEffect(() => {
+    void isAdmin().then(setAdmin);
+  }, []);
 
   const load = async () => {
     setIsLoading(true);
@@ -232,7 +232,7 @@ export default function LoadCarrierManagementPage() {
   };
 
   useEffect(() => {
-    load();
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -251,7 +251,6 @@ export default function LoadCarrierManagementPage() {
   const submitEdit = async (payload: CreateLoadCarrierDto | UpdateLoadCarrierDto) => {
     setIsLoading(true);
     setError(null);
-
     try {
       if (editMode === 'create') {
         await LoadCarrierApi.create(payload as CreateLoadCarrierDto);
@@ -259,7 +258,6 @@ export default function LoadCarrierManagementPage() {
         if (!editTarget) return;
         await LoadCarrierApi.update(editTarget.id, payload as UpdateLoadCarrierDto);
       }
-
       setEditOpen(false);
       await load();
     } catch (e) {
@@ -270,10 +268,8 @@ export default function LoadCarrierManagementPage() {
   };
 
   const remove = async (id: number) => {
-    // keep it simple: no confirm dialog here; add if desired
     setIsLoading(true);
     setError(null);
-
     try {
       await LoadCarrierApi.remove(id);
       await load();
@@ -303,7 +299,7 @@ export default function LoadCarrierManagementPage() {
             variant="contained"
             startIcon={<AddIcon />}
             onClick={openCreate}
-            disabled={isLoading}
+            disabled={isLoading || !admin}
           >
             Create
           </Button>
@@ -371,7 +367,11 @@ export default function LoadCarrierManagementPage() {
                       <QrCode2Icon />
                     </IconButton>
 
-                    <IconButton onClick={() => openEdit(r)} title="Edit">
+                    <IconButton
+                      onClick={() => openEdit(r)}
+                      title="Edit"
+                      disabled={!admin}
+                    >
                       <EditIcon />
                     </IconButton>
 
@@ -379,6 +379,7 @@ export default function LoadCarrierManagementPage() {
                       onClick={() => remove(r.id)}
                       title="Delete"
                       color="error"
+                      disabled={!admin}
                     >
                       <DeleteOutlineIcon />
                     </IconButton>
@@ -395,6 +396,7 @@ export default function LoadCarrierManagementPage() {
         mode={editMode}
         initial={editTarget}
         isLoading={isLoading}
+        admin={admin}
         onClose={() => setEditOpen(false)}
         onSubmit={submitEdit}
       />

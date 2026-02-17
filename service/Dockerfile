@@ -1,24 +1,26 @@
 # ======================================================
 # 1) Build Stage
 # ======================================================
-FROM gradle:9.2.1-jdk21 AS builder
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
-# env-variables are not acessible at build-time. So I need to set it manually
-ARG SPRING_PROFILES_ACTIVE=prod 
+ARG SPRING_PROFILES_ACTIVE=prod
 ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 
+# Copy wrapper files first
 COPY gradlew .
-COPY gradle/ ./gradle
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
-COPY src/ ./src
+COPY gradle/ ./gradle/
 
+# Make wrapper executable
 RUN chmod +x ./gradlew
 
-#RUN ./gradlew dependencies --no-daemon || true
+# Copy build files
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY src/ ./src/
 
+# Use wrapper for build
 RUN ./gradlew clean build -x test
 
 # ======================================================
@@ -28,7 +30,6 @@ FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /app
 
-# Non-root user (Security Best Practice)
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
