@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { WorkbenchApi } from '../api';
 import type { WorkbenchDto } from '../api';
+import { isAdmin } from '../auth';
 
 export default function WorkbenchManagementPage() {
   const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
@@ -28,14 +29,17 @@ export default function WorkbenchManagementPage() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    void isAdmin().then(setAdmin);
+  }, []);
 
   const load = async () => {
     setError(null);
     try {
-      console.log("Loading workbenches...");
       setWorkbenches(await WorkbenchApi.getAll());
     } catch (e) {
-      console.log("Error loading workbenches:", e);
       setError(e instanceof Error ? e.message : 'Failed to load');
     }
   };
@@ -74,6 +78,7 @@ export default function WorkbenchManagementPage() {
         <Button
           variant="contained"
           size="large"
+          disabled={!admin}
           onClick={() => setOpen(true)}
         >
           Add Workbench
@@ -113,6 +118,7 @@ export default function WorkbenchManagementPage() {
                     <Button
                       variant="outlined"
                       color="warning"
+                      disabled={!admin}
                       onClick={() => handleDeactivate(wb.id)}
                     >
                       Deactivate
@@ -125,11 +131,8 @@ export default function WorkbenchManagementPage() {
         </Table>
       </TableContainer>
 
-      {/* =========================================================== */}
-      {/* Create Dialog                                               */}
-      {/* =========================================================== */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Add Workbench</DialogTitle>
+        <DialogTitle>{admin ? 'Add Workbench' : 'Add Workbench (Admins only)'}</DialogTitle>
 
         <DialogContent>
           <TextField
@@ -152,7 +155,7 @@ export default function WorkbenchManagementPage() {
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button
             variant="contained"
-            disabled={!name}
+            disabled={!name || !admin}
             onClick={handleCreate}
           >
             Create
