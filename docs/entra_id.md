@@ -18,11 +18,12 @@ This step-by-step is for someone who has permissions to register a new applicati
 - Open the [Azure Portal](https://portal.azure.com/#home) and navigate to [App-Registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)
 - Click on "New Registration"
     - Under Account-types select "only accounts in organizational structure" (german: "Nur Konten in diesem Organisationsverzeichnis")
-    - Under Redirect URI select as platform "Single-Page Application" and add a redirect URI, e.g. `http://localhost:8080/login/oauth2/code/` (port 8080 for backend, for frontend you could use 5173 and `/dashboard/overview` as path)
+    - Under Redirect URI
+        - for the frontend select as platform "Single-Page Application" and add a redirect URI, e.g. `http://localhost/dashboard/overview` (Azure ignores the ports for localhost redirects. See [here](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url#localhost-exceptions))
+        - for the backend select as platform "Web" and add a redirect URI, e.g. `http://localhost/api/dashboard/overview` (to be honest, I am not sure if a redirect URI is required for the backend)
 - Click "Register"
 - Give your application a meaningful name
 - You will then be presented with your application IDs. You need the Client-ID (german: "Anwendungs-ID (Client)"), Tenant-ID (german: "Verzeichnis-ID (Mandant)")
-- Next, add a secret under "Add certificate or secret" (german: "Ein Zertifikat oder Geheimnis hinzufügen")>"New secret key" and enter an expire time, as well as a meaningful name. You are now presented with the client-secret. __This is the only time you will be able to see this secret. Write it down somewhere safe, e.g. a password manager!__
 
 ### Expose the API
 
