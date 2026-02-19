@@ -21,6 +21,7 @@ services:
     container_name: service
     depends_on:
       - postgres
+      - keycloak
     env_file:
       - .env
     ports:
@@ -38,5 +39,17 @@ services:
     volumes:
       - carrier-hub-data:/var/lib/pg-ddb/data
 
+  keycloak:
+    build: ./keycloak
+    container_name: keycloak
+    command: start-dev --import-realm
+    env_file:
+      - .env
+    ports:
+      - "8090:8090"
+    #volumes:
+    #  - carrier-hub-keycloak-user:/opt/keycloak/data/
+
 volumes:
   carrier-hub-data:
+  #carrier-hub-keycloak-user:
