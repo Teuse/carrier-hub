@@ -13,9 +13,9 @@ OUTPUT_FILE = INPUT_FILE
 
 PROVIDER_MAPPINGS = {
     "microsoft": {
-        "clientId": "${AZURE_KEYCLOAK_CLIENT_ID}",
+        "clientId": "${AZURE_KC_CLIENT_ID}",
         "tenantId": "${AZURE_TENANT_ID}",
-        "clientSecret": "${AZURE_KEYCLOAK_CLIENT_SECRET}",
+        "clientSecret": "${AZURE_KC_CLIENT_SECRET}",
     },
 }
 
