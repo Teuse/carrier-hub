@@ -7,6 +7,7 @@ sequenceDiagram
     participant User
     participant Frontend as Frontend
     participant Backend as Backend API
+    participant Keycloak as Keycloak
     participant EntraID as Azure AD/<br>MS Entra ID
 
     Note over User,EntraID: Initial Page Load & Authentication
@@ -15,14 +16,20 @@ sequenceDiagram
     alt No valid token found
         Frontend->>User: Show login button / redirect to login
         User->>Frontend: Clicks login
-        Frontend->>EntraID: Redirect to authorization endpoint<br/>(with client_id, redirect_uri, scope, code_challenge)
-        EntraID->>User: Display MS login page
+        Frontend->>Keycloak: Redirect to authorization endpoint<br/>(with client_id, redirect_uri, scope, code_challenge)
+        Keycloak->>User: Display Keycloak login page
+        User->>Keycloak: Choose EntraID as identity provider
+        Keycloak->>EntraID: Redirect to Microsoft
+        EntraID->>User: Display Microsoft login page
         User->>EntraID: Enter credentials & authenticate
         EntraID->>EntraID: Validate credentials
-        EntraID->>Frontend: Redirect back with authorization code<br/>(to redirect_uri)
-        Frontend->>EntraID: Exchange code for tokens<br/>(POST /token with code, code_verifier)
-        EntraID->>Frontend: Return tokens<br/>(access_token, id_token, refresh_token)
+        EntraID->>Keycloak: Return authenticated user<br/>identity (abstracted here)
+        Keycloak->>Keycloak: Save identity in database
+        Keycloak->>Frontend: Redirect back with authorization code<br/>(to redirect_uri)
+        Frontend->>Keycloak: Exchange code for tokens<br/>(POST /token with code, code_verifier)
+        Keycloak->>Frontend: Return tokens<br/>(access_token, id_token, refresh_token)
         Frontend->>Frontend: Store tokens (in memory)
+        Keycloak->>Frontend: Redirect to post-login page
         Frontend->>User: Show authenticated UI
     end
 
@@ -30,13 +37,13 @@ sequenceDiagram
     User->>Frontend: E.g. access page that needs data
     Frontend->>Frontend: Get valid access token<br/>(acquireTokenSilent)
     alt Token expired
-        Frontend->>EntraID: Request new token with refresh_token
-        EntraID->>Frontend: Return new access_token
+        Frontend->>Keycloak: Request new token with refresh_token
+        Keycloak->>Frontend: Return new access_token
     end
     Frontend->>Backend: API request with<br/>Authorization: Bearer {access_token}
     Backend->>Backend: Extract JWT from header
-    Backend->>EntraID: Validate token signature<br/>(fetch JWKS public keys - cached)
-    EntraID-->>Backend: Public keys for validation
+    Backend->>Keycloak: Validate token signature<br/>(fetch JWKS public keys - cached)
+    Keycloak-->>Backend: Public keys for validation
     Backend->>Backend: Validate token:<br/>- Signature<br/>- Issuer<br/>- Audience<br/>- Expiration<br/>- Claims/Roles
     alt Token valid
         Backend->>Backend: Check authorization<br/>(hasRole("ADMIN"), etc.)
@@ -56,15 +63,15 @@ sequenceDiagram
 
     Note over User,EntraID: Token Refresh (Background)
     Frontend->>Frontend: Token about to expire
-    Frontend->>EntraID: Silently request new token<br/>(using refresh_token)
-    EntraID->>Frontend: Return new access_token
+    Frontend->>Keycloak: Silently request new token<br/>(using refresh_token)
+    Keycloak->>Frontend: Return new access_token
     Frontend->>Frontend: Update stored token
 
     Note over User,EntraID: Logout
     User->>Frontend: Clicks logout
     Frontend->>Frontend: Clear tokens from memory
-    Frontend->>EntraID: Optional: Redirect to logout endpoint
-    EntraID->>EntraID: End Entra ID session
-    EntraID->>Frontend: Redirect back to app
+    Frontend->>Keycloak: Optional: Redirect to logout endpoint
+    Keycloak->>Keycloak: End Entra ID session
+    Keycloak->>Frontend: Redirect back to app
     Frontend->>User: Show logged out state
 ```
