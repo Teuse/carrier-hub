@@ -10,16 +10,29 @@ import LoadCarrierManagementPage from './pages/LoadCarrierManagementPage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
 import { Box } from "@mui/material";
-import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import { useAuth } from "react-oidc-context";
 
 
 export default function App() {
+  // Validate environment variables
+  const requiredVars = {
+    VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+    VITE_REDIRECT_URI: import.meta.env.VITE_REDIRECT_URI,
+    VITE_KC_FRONTEND_CLIENT_ID: import.meta.env.VITE_KC_FRONTEND_CLIENT_ID,
+    VITE_KC_HTTP_PORT: import.meta.env.VITE_KC_HTTP_PORT
+  };
 
-  const { inProgress } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
+  const missing = Object.entries(requiredVars)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
 
-  // Show loading while MSAL processes redirect
-  if (inProgress === "startup" || inProgress === "handleRedirect") {
+  if (missing.length > 0) {
+    throw new Error(`Missing environment variables: ${missing.join(', ')}`);
+  }
+  
+  const { isAuthenticated, isLoading, error } = useAuth(); 
+
+  if (isLoading) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -31,6 +44,10 @@ export default function App() {
       </div>
     );
   }
+
+  if (error) {
+        return <div>Oops... {error.source} caused {error.message}</div>;
+    }
 
   return (
     <Routes>

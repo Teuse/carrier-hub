@@ -2,16 +2,17 @@ import { AppBar, Toolbar, Button, Menu, MenuItem } from "@mui/material";
 import { Divider, ListItemIcon } from "@mui/material";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { getUser, logout } from "../auth";
+import { handleSignOut } from "../auth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation, useNavigate } from "react-router-dom";
 import IvecoLogo from "../assets/iveco_logo_white.svg";
+import { useAuth } from "react-oidc-context";
 
 export default function Header() {
   const navigate = useNavigate();
-  const user = getUser();
+  const auth = useAuth();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const location = useLocation();
 
@@ -94,7 +95,7 @@ export default function Header() {
           open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
         >
-          <MenuItem disabled>{user?.username}</MenuItem>
+          <MenuItem disabled>{auth.user?.profile.email}</MenuItem>
 
           <Divider />
 
@@ -121,7 +122,7 @@ export default function Header() {
           <MenuItem
             onClick={() => {
               setAnchorEl(null);
-              logout();
+              handleSignOut(auth);
             }}
           >
             <ListItemIcon>

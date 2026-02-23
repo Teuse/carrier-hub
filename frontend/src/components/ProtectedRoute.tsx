@@ -1,13 +1,13 @@
 import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import { useIsAuthenticated } from '@azure/msal-react';
+import { useAuth } from 'react-oidc-context';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

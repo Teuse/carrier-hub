@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import {
   Box,
   Stack,
@@ -41,14 +42,15 @@ function StatCard({
 /* ====================================================== */
 
 export default function Dashboard() {
-  const [data, setData] =
-    useState<DashboardOverviewDto | null>(null);
+  const auth = useAuth();
+  const [data, setData] = useState<DashboardOverviewDto | null>(null);
 
   useEffect(() => {
-    DashboardApi.getOverview().then(setData);
-  }, []);
+    if (!auth.isAuthenticated) return;
+    DashboardApi.getOverview(auth).then(setData);
+  }, [auth.isAuthenticated]);
 
-  if (!data) {
+  if (auth.isLoading || !data) {
     return (
       <Box
         sx={{

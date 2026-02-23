@@ -1,21 +1,17 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
-import { loginRequest } from '../auth';
-import { useMsal } from '@azure/msal-react';
+import { useAuth } from 'react-oidc-context';
+import { handleSignin } from '../auth';
 
 export default function LoginPage() {
-  const { instance } = useMsal();
+  const auth = useAuth();
 
-  const handleLogin = () => {
-    instance.loginRedirect(loginRequest);
-  };
-
-  
   return (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Paper sx={{ p: 4, width: 320 }}>
         <Typography variant="h6" gutterBottom>IVECO Login</Typography>
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleLogin}>
-          Login with Microsoft</Button>
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }} onClick={() => handleSignin(auth)}>
+          Login
+        </Button>
       </Paper>
     </Box>
   );

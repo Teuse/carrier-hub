@@ -1,27 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { PublicClientApplication, EventType } from '@azure/msal-browser'
-import { MsalProvider } from '@azure/msal-react'
+import { AuthProvider } from "react-oidc-context";
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import App from './App';
-import { msalConfig } from './auth'
-
-// Create MSAL instance
-export const msalInstance = new PublicClientApplication(msalConfig);
-await msalInstance.initialize();
-
-// Handle redirect after login
-await msalInstance.handleRedirectPromise();
-
-// Set active account
-msalInstance.addEventCallback((event) => {
-  if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
-    const payload = event.payload as any;
-    msalInstance.setActiveAccount(payload.account);
-  }
-});
+import { oidcConfig } from './auth'
 
 ReactDOM.createRoot(
   document.getElementById('root')!
@@ -30,9 +14,9 @@ ReactDOM.createRoot(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <MsalProvider instance={msalInstance}>
+        <AuthProvider {...oidcConfig}>
           <App />
-        </MsalProvider>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>

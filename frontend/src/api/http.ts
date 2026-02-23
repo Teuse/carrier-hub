@@ -1,33 +1,26 @@
-import { msalInstance } from '../main';
-import { loginRequest } from '../auth';
+import type { AuthContextProps } from 'react-oidc-context';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export async function http<T>(
+  auth: AuthContextProps,
   url: string,
   options?: RequestInit
 ): Promise<T> {
   const optHeaders = options?.headers ?? {};
-  
-  // Get accounts from msalInstance (not from hook)
-  const accounts = msalInstance.getAllAccounts();
-  
-  if (accounts.length === 0) {
+
+  if (!auth.isAuthenticated || !auth.user) {
     throw new Error('No authenticated user found. Please log in.');
   }
-  
-  // Get access token
-  const authResponse = await msalInstance.acquireTokenSilent({
-    ...loginRequest,
-    account: accounts[0],
-  });
-  
+
+  const token = auth.user.access_token;
+
   const res = await fetch(`${API_BASE}${url}`, {
     credentials: 'include',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authResponse.accessToken}`,
+      'Authorization': `Bearer ${token}`,
       ...optHeaders,
     },
   });
