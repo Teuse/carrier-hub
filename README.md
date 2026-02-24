@@ -13,17 +13,25 @@ POSTGRES_DB=ddb
 DB_USER=pg
 DB_PASSWORD=pw
 
-AZURE_BACKEND_CLIENT_ID=<your-Azure-AD-backend-client-ID>
-AZURE_TENANT_ID=<your-Azure-AD-Tenant-ID>
-
-VITE_API_BASE_URL=http://localhost:8080
-VITE_AZURE_FRONTEND_CLIENT_ID=<your-Azure-AD-frontend-client-ID>
-VITE_AZURE_TENANT_ID=${AZURE_TENANT_ID}
-VITE_AZURE_BACKEND_CLIENT_ID=${AZURE_BACKEND_CLIENT_ID}
-VITE_REDIRECT_URI=http://localhost:5173/dashboard/overview
+AZURE_TENANT_ID=<Your-Keycloak-tenant-id-in-Azure>
 
 POSTGRES_USER=${DB_USER}
 POSTGRES_PASSWORD=${DB_PASSWORD}
+
+KC_HTTP_PORT=8090
+KC_BOOTSTRAP_ADMIN_USERNAME=admin
+KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+AZURE_KEYCLOAK_CLIENT_ID=<Your-Keycloak-client-id-in-Azure>
+AZURE_KEYCLOAK_CLIENT_SECRET=<Your-Keycloak-client-secret-in-Azure>
+
+KC_BACKEND_CLIENT_ID=Carrier-Hub_Backend
+KC_FRONTEND_CLIENT_ID=Carrier-Hub_Frontend
+
+VITE_API_BASE_URL=http://localhost:8080
+VITE_REDIRECT_URI=http://localhost:5173/dashboard/overview
+VITE_KC_HTTP_PORT=${KC_HTTP_PORT}
+VITE_KC_FRONTEND_CLIENT_ID=${KC_FRONTEND_CLIENT_ID}
+VITE_KC_BACKEND_CLIENT_ID=${KC_BACKEND_CLIENT_ID}
 ```
 
 Launch the application with docker compose:
