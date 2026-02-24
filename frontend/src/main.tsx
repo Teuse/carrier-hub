@@ -6,7 +6,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import App from './App';
 import { oidcConfig } from './auth'
-import { ApiProvider } from './api/http';
+import { ApiProvider } from './components/ApiProvider';
 
 ReactDOM.createRoot(
   document.getElementById('root')!
