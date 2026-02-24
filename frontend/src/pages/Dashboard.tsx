@@ -47,7 +47,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!auth.isAuthenticated) return;
-    DashboardApi.getOverview(auth).then(setData);
+    DashboardApi.getOverview().then(setData);
   }, [auth.isAuthenticated]);
 
   if (auth.isLoading || !data) {

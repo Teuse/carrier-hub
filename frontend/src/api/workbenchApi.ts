@@ -1,4 +1,4 @@
-import { http } from './http';
+import { http } from './http'; // Changed import
 import type {
   WorkbenchDto,
   LoadCarrierRequestDto,
@@ -16,9 +16,7 @@ export const WorkbenchApi = {
   getActive: (): Promise<WorkbenchDto[]> =>
     http('/api/workbenches'),
 
-  getRequests: (
-    workbenchId: number
-  ): Promise<LoadCarrierRequestDto[]> =>
+  getRequests: (workbenchId: number): Promise<LoadCarrierRequestDto[]> =>
     http(`/api/workbenches/${workbenchId}/requests`),
 
   requestNew: (
@@ -27,16 +25,13 @@ export const WorkbenchApi = {
   ): Promise<LoadCarrierRequestDto> =>
     http(`/api/workbenches/${workbenchId}/requests`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     }),
 
   getAllAnomalies: (): Promise<AnomalyDto[]> =>
     http('/api/anomalies'),
 
-  getAnomalies: (
-    workbenchId: number
-  ): Promise<AnomalyDto[]> =>
+  getAnomalies: (workbenchId: number): Promise<AnomalyDto[]> =>
     http(`/api/workbenches/${workbenchId}/anomalies`),
 
   reportAnomaly: (
@@ -45,7 +40,6 @@ export const WorkbenchApi = {
   ): Promise<AnomalyDto> =>
     http(`/api/workbenches/${workbenchId}/anomalies`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     }),
 
@@ -55,9 +49,9 @@ export const WorkbenchApi = {
   ): Promise<AnomalyDto> =>
     http(`/api/anomalies/${anomalyId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-  }),
+    }),
+
   /* ===================================================== */
   /* Management / Admin                                   */
   /* ===================================================== */
@@ -65,13 +59,9 @@ export const WorkbenchApi = {
   getAll: (): Promise<WorkbenchDto[]> =>
     http('/api/workbenches/all'),
 
-  create: (
-    name: string,
-    description?: string
-  ): Promise<WorkbenchDto> =>
+  create: (name: string, description?: string): Promise<WorkbenchDto> =>
     http('/api/workbenches', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description }),
     }),
 

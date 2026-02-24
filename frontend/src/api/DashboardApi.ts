@@ -1,4 +1,3 @@
-import type { AuthContextProps } from 'react-oidc-context';
 import { http } from './http';
 
 export interface DashboardOverviewDto {
@@ -17,6 +16,6 @@ export interface DashboardOverviewDto {
 }
 
 export const DashboardApi = {
-  getOverview: (auth: AuthContextProps): Promise<DashboardOverviewDto> =>
-    http<DashboardOverviewDto>(auth, '/api/dashboard/overview'),
+  getOverview: (): Promise<DashboardOverviewDto> =>
+    http<DashboardOverviewDto>('/api/dashboard/overview'),
 };

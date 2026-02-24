@@ -1,4 +1,5 @@
 import type { AuthContextProps } from 'react-oidc-context';
+import { useAuth } from 'react-oidc-context';
 
 export const oidcConfig = {
   authority: `http://localhost:${import.meta.env.VITE_KC_HTTP_PORT}/realms/Carrier-Hub`,
@@ -22,14 +23,18 @@ function parseJwt(token: string): Record<string, unknown> {
 
 type Role = 'USER' | 'ADMIN';
 
-export function isAdmin(auth: AuthContextProps): boolean {
-  // auth is currently undefined
+export function isAdmin(): boolean {
+  const auth = useAuth();
+  
   if (!auth.isAuthenticated || !auth.user) {
     return false;
   }
 
   const claims = parseJwt(auth.user.access_token);
-  const roles = (claims.roles as Role[]) ?? [];
+  const clientId = import.meta.env.VITE_KC_BACKEND_CLIENT_ID;
+  
+  const resourceAccess = claims.resource_access as Record<string, { roles?: Role[] }> | undefined;
+  const roles = resourceAccess?.[clientId]?.roles ?? [];
 
   return roles.includes('ADMIN');
 }

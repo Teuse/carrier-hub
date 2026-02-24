@@ -16,6 +16,7 @@ import { useAuth } from "react-oidc-context";
 export default function App() {
   // Validate environment variables
   const requiredVars = {
+    VITE_KC_BACKEND_CLIENT_ID: import.meta.env.VITE_KC_BACKEND_CLIENT_ID,
     VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
     VITE_REDIRECT_URI: import.meta.env.VITE_REDIRECT_URI,
     VITE_KC_FRONTEND_CLIENT_ID: import.meta.env.VITE_KC_FRONTEND_CLIENT_ID,

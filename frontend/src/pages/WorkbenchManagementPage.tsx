@@ -29,11 +29,8 @@ export default function WorkbenchManagementPage() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [admin, setAdmin] = useState(false);
 
-  useEffect(() => {
-    void isAdmin().then(setAdmin);
-  }, []);
+  const admin = isAdmin();
 
   const load = async () => {
     setError(null);

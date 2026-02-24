@@ -198,7 +198,6 @@ export default function LoadCarrierManagementPage() {
   const [rows, setRows] = useState<LoadCarrierDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [admin, setAdmin] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editMode, setEditMode] = useState<Mode>('create');
@@ -207,16 +206,14 @@ export default function LoadCarrierManagementPage() {
   const [qrOpen, setQrOpen] = useState(false);
   const [qrValue, setQrValue] = useState('');
   const [qrTitle, setQrTitle] = useState('');
+  const admin = isAdmin();
+
 
   const sorted = useMemo(() => {
     return [...rows].sort(
       (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
   }, [rows]);
-
-  useEffect(() => {
-    void isAdmin().then(setAdmin);
-  }, []);
 
   const load = async () => {
     setIsLoading(true);

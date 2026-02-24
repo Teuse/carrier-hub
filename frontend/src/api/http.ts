@@ -1,19 +1,29 @@
-import type { AuthContextProps } from 'react-oidc-context';
+import { useEffect, type ReactNode } from 'react';
+import { useAuth } from 'react-oidc-context';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
+// This will be set by the ApiProvider
+let getAuthToken: (() => string | null) | null = null;
+
+export function setAuthTokenGetter(getter: () => string | null) {
+  getAuthToken = getter;
+}
+
 export async function http<T>(
-  auth: AuthContextProps,
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const optHeaders = options?.headers ?? {};
+  if (!getAuthToken) {
+    throw new Error('Auth not initialized. Wrap your app in ApiProvider.');
+  }
 
-  if (!auth.isAuthenticated || !auth.user) {
+  const token = getAuthToken();
+  if (!token) {
     throw new Error('No authenticated user found. Please log in.');
   }
 
-  const token = auth.user.access_token;
+  const optHeaders = options?.headers ?? {};
 
   const res = await fetch(`${API_BASE}${url}`, {
     credentials: 'include',
@@ -36,4 +46,20 @@ export async function http<T>(
   }
 
   return JSON.parse(text) as T;
+}
+
+type ApiProviderProps = {
+  children: ReactNode;
+};
+
+// Provider component to inject auth
+export function ApiProvider({ children }: ApiProviderProps) {
+  const auth = useAuth();
+
+  // Set up the token getter once when provider mounts
+  useEffect(() => {
+    setAuthTokenGetter(() => auth.user?.access_token ?? null);
+  }, [auth.user?.access_token]);
+
+  return children;
 }
