@@ -41,13 +41,23 @@ services:
     build: ./keycloak
     container_name: keycloak
     command: start-dev --import-realm
+    depends_on:
+      - keycloak_postgres
     env_file:
       - .env
     ports:
       - "8090:8090"
-    #volumes:
-    #  - carrier-hub-keycloak-user:/opt/keycloak/data/
+
+  keycloak_postgres:
+    image: postgres:18
+    container_name: keycloak_database
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: pg
+      POSTGRES_PASSWORD: pw
+    volumes:
+      - carrier-hub-keycloak-user:/var/lib/pg-ddb/data
 
 volumes:
   carrier-hub-data:
-  #carrier-hub-keycloak-user:
+  carrier-hub-keycloak-user:
