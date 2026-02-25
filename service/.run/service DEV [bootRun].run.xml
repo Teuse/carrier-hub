@@ -6,6 +6,7 @@
           <entry key="DB_PASSWORD" value="pw" />
           <entry key="DB_USER" value="pg" />
           <entry key="KC_BACKEND_CLIENT_ID" value="Carrier-Hub_Backend" />
+          <entry key="KC_HOSTNAME" value="http://localhost:${KC_HTTP_PORT} " />
           <entry key="KC_HTTP_PORT" value="8090" />
           <entry key="SPRING_DATASOURCE_URL" value="jdbc:h2:mem:ddb" />
           <entry key="SPRING_PROFILES_ACTIVE" value="dev" />
