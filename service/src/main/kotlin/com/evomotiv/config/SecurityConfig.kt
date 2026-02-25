@@ -43,9 +43,12 @@ class SecurityConfig {
     @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private lateinit var issuerUri: String
 
+    @Value("\${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    private lateinit var jwksUri: String
+
     @Value("\${carrier-hub.security.client-id}")
     private lateinit var clientId: String
-
+    
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.cors(Customizer.withDefaults())
@@ -68,9 +71,8 @@ class SecurityConfig {
 
     @Bean
     fun jwtDecoder(): JwtDecoder {
-        val decoder = JwtDecoders.fromIssuerLocation(issuerUri) as NimbusJwtDecoder
+        val decoder = NimbusJwtDecoder.withJwkSetUri(jwksUri).build()
 
-        // Combine default issuer validator with our custom audience validator
         val defaultValidator = JwtValidators.createDefaultWithIssuer(issuerUri)
         val audienceValidator = audienceValidator()
 

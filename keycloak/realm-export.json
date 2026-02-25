@@ -533,7 +533,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "${KC_BACKEND_CLIENT_SECRET}",
       "redirectUris": [
         ""
       ],
