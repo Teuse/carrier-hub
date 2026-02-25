@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "react-oidc-context";
 import {
   Dialog,
   DialogTitle,
@@ -14,6 +15,7 @@ import {
 import type { RequestPriority } from "../api";
 
 import { LoadCarrierApi, type LoadCarrierDto } from "../api/LoadCarrierApi";
+import { useHttp } from "../hooks/useHttp";
 
 export type CreateLoadCarrierRequestPayload = {
   loadCarrierId: number;
@@ -29,6 +31,9 @@ export default function RequestDialog(props: {
 }) {
   const { open, isLoading, onClose, onSubmit } = props;
 
+  const auth = useAuth();
+  const http = useHttp();
+
   const [templates, setTemplates] = useState<LoadCarrierDto[]>([]);
   const [templatesLoading, setTemplatesLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,10 +44,11 @@ export default function RequestDialog(props: {
 
   useEffect(() => {
     if (!open) return;
+    if (!auth.isAuthenticated || !auth.user) return;
 
     setError(null);
     setTemplatesLoading(true);
-    LoadCarrierApi.getAll()
+    LoadCarrierApi.getAll(http)
       .then((data) => setTemplates(data))
       .catch((e) =>
         setError(
@@ -51,11 +57,10 @@ export default function RequestDialog(props: {
       )
       .finally(() => setTemplatesLoading(false));
 
-    // reset fields when opened
     setLoadCarrierId("");
     setPriority("NORMAL");
     setComment("");
-  }, [open]);
+  }, [open, auth.isAuthenticated, auth.user]);
 
   const canSubmit =
     loadCarrierId !== "" &&

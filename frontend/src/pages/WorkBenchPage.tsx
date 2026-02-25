@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "react-oidc-context";
 import {
   Box,
   Typography,
@@ -24,18 +25,16 @@ import type {
   CreateAnomalyDto,
 } from "../api";
 import AnomalyTable from "../components/AnomalyTable";
-
-/* ====================================================== */
+import { useHttp } from "../hooks/useHttp";
 
 const STORAGE_KEY = "selectedWorkbenchId";
 
-/* ====================================================== */
-
 export default function WorkbenchPage() {
-  /* ---------- sidebar ---------- */
+  const auth = useAuth();
+  const http = useHttp();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ---------- workbenches ---------- */
   const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
   const [selectedWorkbenchId, setSelectedWorkbenchId] = useState<number | null>(
     () => {
@@ -44,19 +43,14 @@ export default function WorkbenchPage() {
     },
   );
 
-  /* ---------- requests ---------- */
   const [requests, setRequests] = useState<LoadCarrierRequestDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /* ---------- anomalies ---------- */
   const [anomalies, setAnomalies] = useState<AnomalyDto[]>([]);
   const [anomalyDialogOpen, setAnomalyDialogOpen] = useState(false);
 
-  /* ---------- dialogs ---------- */
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
-
-  /* ====================================================== */
 
   const selectedWorkbench = workbenches.find(
     (w) => w.id === selectedWorkbenchId,
@@ -72,38 +66,28 @@ export default function WorkbenchPage() {
   );
 
   const activeRequests = sortedRequests.filter((r) => r.status !== "DELIVERED");
-  const historyRequests = sortedRequests.filter(
-    (r) => r.status === "DELIVERED",
-  );
-
+  const historyRequests = sortedRequests.filter((r) => r.status === "DELIVERED");
   const hasOpenRequest = activeRequests.length > 0;
 
-  /* ====================================================== */
-  /* Initial load                                           */
-  /* ====================================================== */
+  useEffect(() => {
+    if (!auth.isAuthenticated || !auth.user) return;
+    WorkbenchApi.getActive(http).then(setWorkbenches);
+  }, [auth.isAuthenticated, auth.user]);
 
   useEffect(() => {
-    WorkbenchApi.getActive().then(setWorkbenches);
-  }, []);
-
-  useEffect(() => {
+    if (!auth.isAuthenticated || !auth.user) return;
     if (selectedWorkbenchId) {
       loadRequests(selectedWorkbenchId);
       loadAnomalies(selectedWorkbenchId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWorkbenchId]);
-
-  /* ====================================================== */
-  /* Loaders                                                */
-  /* ====================================================== */
+  }, [selectedWorkbenchId, auth.isAuthenticated, auth.user]);
 
   const loadRequests = async (workbenchId: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const data = await WorkbenchApi.getRequests(workbenchId);
+      const data = await WorkbenchApi.getRequests(http, workbenchId);
       setRequests(data);
     } catch {
       setError("Failed to load requests");
@@ -114,16 +98,12 @@ export default function WorkbenchPage() {
 
   const loadAnomalies = async (workbenchId: number) => {
     try {
-      const data = await WorkbenchApi.getAnomalies(workbenchId);
+      const data = await WorkbenchApi.getAnomalies(http, workbenchId);
       setAnomalies(data);
     } catch {
       setError("Failed to load anomalies");
     }
   };
-
-  /* ====================================================== */
-  /* Create request                                         */
-  /* ====================================================== */
 
   const createRequest = async (payload: {
     loadCarrierId: number;
@@ -136,7 +116,7 @@ export default function WorkbenchPage() {
     setError(null);
 
     try {
-      await WorkbenchApi.requestNew(selectedWorkbenchId, payload);
+      await WorkbenchApi.requestNew(http, selectedWorkbenchId, payload);
       setRequestDialogOpen(false);
       await loadRequests(selectedWorkbenchId);
     } catch {
@@ -146,10 +126,6 @@ export default function WorkbenchPage() {
     }
   };
 
-  /* ====================================================== */
-  /* Create anomaly                                         */
-  /* ====================================================== */
-
   const createAnomaly = async (payload: CreateAnomalyDto) => {
     if (!selectedWorkbenchId) return;
 
@@ -157,7 +133,7 @@ export default function WorkbenchPage() {
     setError(null);
 
     try {
-      await WorkbenchApi.reportAnomaly(selectedWorkbenchId, payload);
+      await WorkbenchApi.reportAnomaly(http, selectedWorkbenchId, payload);
       setAnomalyDialogOpen(false);
       await loadAnomalies(selectedWorkbenchId);
     } catch {
@@ -167,11 +143,8 @@ export default function WorkbenchPage() {
     }
   };
 
-  /* ====================================================== */
-
   return (
     <Box sx={{ display: "flex", height: "100%" }}>
-      {/* ================= Sidebar ================= */}
       <WorkbenchSelector
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -183,7 +156,6 @@ export default function WorkbenchPage() {
         }}
       />
 
-      {/* ================= Main ================= */}
       <Box sx={{ flex: 1, p: 4 }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <IconButton onClick={() => setSidebarOpen(true)}>
@@ -201,7 +173,6 @@ export default function WorkbenchPage() {
           </Alert>
         )}
 
-        {/* ================= Actions ================= */}
         {selectedWorkbench && (
           <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
             <Button
@@ -224,14 +195,12 @@ export default function WorkbenchPage() {
           </Stack>
         )}
 
-        {/* ================= Loading ================= */}
         {isLoading && (
           <Box sx={{ py: 4, textAlign: "center" }}>
             <CircularProgress />
           </Box>
         )}
 
-        {/* ================= Tables ================= */}
         {!isLoading && selectedWorkbench && (
           <>
             <RequestTable title="Active Requests" requests={activeRequests} />
@@ -245,7 +214,6 @@ export default function WorkbenchPage() {
         )}
       </Box>
 
-      {/* ================= Dialogs ================= */}
       <RequestLoadCarrierDialog
         open={requestDialogOpen}
         onClose={() => setRequestDialogOpen(false)}

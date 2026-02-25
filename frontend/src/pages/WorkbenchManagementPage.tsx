@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import {
   Box,
   Typography,
@@ -22,8 +23,12 @@ import {
 import { WorkbenchApi } from '../api';
 import type { WorkbenchDto } from '../api';
 import { isAdmin } from '../auth';
+import { useHttp } from '../hooks/useHttp';
 
 export default function WorkbenchManagementPage() {
+  const auth = useAuth();
+  const http = useHttp();
+
   const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -35,19 +40,20 @@ export default function WorkbenchManagementPage() {
   const load = async () => {
     setError(null);
     try {
-      setWorkbenches(await WorkbenchApi.getAll());
+      setWorkbenches(await WorkbenchApi.getAll(http));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load');
     }
   };
 
   useEffect(() => {
+    if (!auth.isAuthenticated || !auth.user) return;
     void load();
-  }, []);
+  }, [auth.isAuthenticated, auth.user]);
 
   const handleCreate = async () => {
     try {
-      await WorkbenchApi.create(name, description || undefined);
+      await WorkbenchApi.create(http, name, description || undefined);
       setName('');
       setDescription('');
       setOpen(false);
@@ -58,7 +64,7 @@ export default function WorkbenchManagementPage() {
   };
 
   const handleDeactivate = async (id: number) => {
-    await WorkbenchApi.deactivate(id);
+    await WorkbenchApi.deactivate(http, id);
     await load();
   };
 

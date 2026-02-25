@@ -1,4 +1,4 @@
-import { http } from './http';
+import type { HttpFn } from '../hooks/useHttp'
 
 export interface DashboardOverviewDto {
   totalRequests: number;
@@ -16,6 +16,6 @@ export interface DashboardOverviewDto {
 }
 
 export const DashboardApi = {
-  getOverview: (): Promise<DashboardOverviewDto> =>
+  getOverview: (http: HttpFn): Promise<DashboardOverviewDto> =>
     http<DashboardOverviewDto>('/api/dashboard/overview'),
 };

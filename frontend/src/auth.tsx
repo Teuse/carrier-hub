@@ -5,7 +5,7 @@ export const oidcConfig = {
   authority: `http://localhost:${import.meta.env.VITE_KC_HTTP_PORT}/realms/Carrier-Hub`,
   client_id: import.meta.env.VITE_KC_FRONTEND_CLIENT_ID,
   redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-  // ...
+  onSigninCallback: () => window.history.replaceState({}, document.title, window.location.pathname),
 };
 
 export const handleSignin = (auth: AuthContextProps) => {

@@ -6,7 +6,6 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import App from './App';
 import { oidcConfig } from './auth'
-import { ApiProvider } from './components/ApiProvider';
 
 ReactDOM.createRoot(
   document.getElementById('root')!
@@ -16,9 +15,7 @@ ReactDOM.createRoot(
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider {...oidcConfig}>
-          <ApiProvider>
-            <App />
-          </ApiProvider>
+          <App />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

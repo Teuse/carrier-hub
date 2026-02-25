@@ -1,14 +1,14 @@
-import { http } from './http';
+import type { HttpFn } from '../hooks/useHttp'
 import type { LoadCarrierRequestDto } from './types';
 
 export const LoadCarrierRequestApi = {
   /* Warehouse + Logistics view */
-  getAll: (): Promise<LoadCarrierRequestDto[]> =>
-    http('/api/requests'),
+  getAll: (http: HttpFn): Promise<LoadCarrierRequestDto[]> =>
+    http<LoadCarrierRequestDto[]>('/api/requests'),
 
   /* Status transition */
-  advance: (id: number): Promise<LoadCarrierRequestDto> =>
-    http(`/api/requests/${id}/advance`, {
+  advance: (http: HttpFn, id: number): Promise<LoadCarrierRequestDto> =>
+    http<LoadCarrierRequestDto>(`/api/requests/${id}/advance`, {
       method: 'POST',
     }),
 };

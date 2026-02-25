@@ -1,4 +1,4 @@
-import { http } from './http';
+import type { HttpFn } from '../hooks/useHttp'
 
 export interface LoadCarrierDto {
   id: number;
@@ -21,25 +21,26 @@ export interface UpdateLoadCarrierDto {
 }
 
 export const LoadCarrierApi = {
-  getAll: (): Promise<LoadCarrierDto[]> => http('/api/load-carriers'),
+  getAll: (http: HttpFn): Promise<LoadCarrierDto[]> => 
+    http<LoadCarrierDto[]>('/api/load-carriers'),
 
-  getById: (id: number): Promise<LoadCarrierDto> =>
-    http(`/api/load-carriers/${id}`),
+  getById: (http: HttpFn, id: number): Promise<LoadCarrierDto> =>
+    http<LoadCarrierDto>(`/api/load-carriers/${id}`),
 
-  create: (payload: CreateLoadCarrierDto): Promise<LoadCarrierDto> =>
-    http('/api/load-carriers', {
+  create: (http: HttpFn, payload: CreateLoadCarrierDto): Promise<LoadCarrierDto> =>
+    http<LoadCarrierDto>('/api/load-carriers', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
 
-  update: (id: number, payload: UpdateLoadCarrierDto): Promise<LoadCarrierDto> =>
-    http(`/api/load-carriers/${id}`, {
+  update: (http: HttpFn, id: number, payload: UpdateLoadCarrierDto): Promise<LoadCarrierDto> =>
+    http<LoadCarrierDto>(`/api/load-carriers/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
 
-  remove: (id: number): Promise<void> =>
-    http(`/api/load-carriers/${id}`, {
+  remove: (http: HttpFn, id: number): Promise<void> =>
+    http<void>(`/api/load-carriers/${id}`, {
       method: 'DELETE',
     }),
 };

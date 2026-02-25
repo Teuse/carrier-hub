@@ -1,5 +1,5 @@
-
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import {
   Box,
   Stack,
@@ -36,11 +36,7 @@ import {
   type UpdateLoadCarrierDto,
 } from '../api/LoadCarrierApi';
 import { isAdmin } from '../auth';
-
-
-/* ====================================================== */
-/* Small helpers                                           */
-/* ====================================================== */
+import { useHttp } from '../hooks/useHttp';
 
 type Mode = 'create' | 'edit';
 
@@ -49,10 +45,6 @@ function isoToReadable(iso: string): string {
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleString();
 }
-
-/* ====================================================== */
-/* Edit/Create Dialog                                      */
-/* ====================================================== */
 
 type EditFormState = {
   name: string;
@@ -149,10 +141,6 @@ function LoadCarrierEditDialog(props: {
   );
 }
 
-/* ====================================================== */
-/* QR Code Dialog                                          */
-/* ====================================================== */
-
 function QrCodeDialog(props: {
   open: boolean;
   title: string;
@@ -190,11 +178,10 @@ function QrCodeDialog(props: {
   );
 }
 
-/* ====================================================== */
-/* Page                                                    */
-/* ====================================================== */
-
 export default function LoadCarrierManagementPage() {
+  const auth = useAuth();
+  const http = useHttp();
+
   const [rows, setRows] = useState<LoadCarrierDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -206,8 +193,8 @@ export default function LoadCarrierManagementPage() {
   const [qrOpen, setQrOpen] = useState(false);
   const [qrValue, setQrValue] = useState('');
   const [qrTitle, setQrTitle] = useState('');
-  const admin = isAdmin();
 
+  const admin = isAdmin();
 
   const sorted = useMemo(() => {
     return [...rows].sort(
@@ -219,7 +206,7 @@ export default function LoadCarrierManagementPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await LoadCarrierApi.getAll();
+      const data = await LoadCarrierApi.getAll(http);
       setRows(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load load carriers');
@@ -229,9 +216,9 @@ export default function LoadCarrierManagementPage() {
   };
 
   useEffect(() => {
+    if (!auth.isAuthenticated || !auth.user) return;
     void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth.isAuthenticated, auth.user]);
 
   const openCreate = () => {
     setEditMode('create');
@@ -250,10 +237,10 @@ export default function LoadCarrierManagementPage() {
     setError(null);
     try {
       if (editMode === 'create') {
-        await LoadCarrierApi.create(payload as CreateLoadCarrierDto);
+        await LoadCarrierApi.create(http, payload as CreateLoadCarrierDto);
       } else {
         if (!editTarget) return;
-        await LoadCarrierApi.update(editTarget.id, payload as UpdateLoadCarrierDto);
+        await LoadCarrierApi.update(http, editTarget.id, payload as UpdateLoadCarrierDto);
       }
       setEditOpen(false);
       await load();
@@ -268,7 +255,7 @@ export default function LoadCarrierManagementPage() {
     setIsLoading(true);
     setError(null);
     try {
-      await LoadCarrierApi.remove(id);
+      await LoadCarrierApi.remove(http, id);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Delete failed');

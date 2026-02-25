@@ -11,6 +11,7 @@ import {
 
 import { DashboardApi } from '../api/DashboardApi';
 import type { DashboardOverviewDto } from '../api/DashboardApi';
+import { useHttp } from '../hooks/useHttp';
 
 /* ====================================================== */
 
@@ -43,12 +44,14 @@ function StatCard({
 
 export default function Dashboard() {
   const auth = useAuth();
+  const http = useHttp();
   const [data, setData] = useState<DashboardOverviewDto | null>(null);
 
   useEffect(() => {
-    if (!auth.isAuthenticated) return;
-    DashboardApi.getOverview().then(setData);
-  }, [auth.isAuthenticated]);
+    if (!auth.isAuthenticated || !auth.user) return;
+    DashboardApi.getOverview(http).then(setData).catch(console.error);
+  }, [auth.isAuthenticated, auth.user]); 
+
 
   if (auth.isLoading || !data) {
     return (

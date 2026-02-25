@@ -1,4 +1,4 @@
-import { http } from './http'; // Changed import
+import type { HttpFn } from '../hooks/useHttp'
 import type {
   WorkbenchDto,
   LoadCarrierRequestDto,
@@ -13,41 +13,44 @@ export const WorkbenchApi = {
   /* Selection / Runtime                                  */
   /* ===================================================== */
 
-  getActive: (): Promise<WorkbenchDto[]> =>
-    http('/api/workbenches'),
+  getActive: (http: HttpFn): Promise<WorkbenchDto[]> =>
+    http<WorkbenchDto[]>('/api/workbenches'),
 
-  getRequests: (workbenchId: number): Promise<LoadCarrierRequestDto[]> =>
-    http(`/api/workbenches/${workbenchId}/requests`),
+  getRequests: (http: HttpFn, workbenchId: number): Promise<LoadCarrierRequestDto[]> =>
+    http<LoadCarrierRequestDto[]>(`/api/workbenches/${workbenchId}/requests`),
 
   requestNew: (
+    http: HttpFn, 
     workbenchId: number,
     payload: CreateLoadCarrierRequestDto
   ): Promise<LoadCarrierRequestDto> =>
-    http(`/api/workbenches/${workbenchId}/requests`, {
+    http<LoadCarrierRequestDto>(`/api/workbenches/${workbenchId}/requests`, {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
 
-  getAllAnomalies: (): Promise<AnomalyDto[]> =>
-    http('/api/anomalies'),
+  getAllAnomalies: (http: HttpFn): Promise<AnomalyDto[]> =>
+    http<AnomalyDto[]>('/api/anomalies'),
 
-  getAnomalies: (workbenchId: number): Promise<AnomalyDto[]> =>
-    http(`/api/workbenches/${workbenchId}/anomalies`),
+  getAnomalies: (http: HttpFn, workbenchId: number): Promise<AnomalyDto[]> =>
+    http<AnomalyDto[]>(`/api/workbenches/${workbenchId}/anomalies`),
 
   reportAnomaly: (
+    http: HttpFn,
     workbenchId: number,
     payload: CreateAnomalyDto
   ): Promise<AnomalyDto> =>
-    http(`/api/workbenches/${workbenchId}/anomalies`, {
+    http<AnomalyDto>(`/api/workbenches/${workbenchId}/anomalies`, {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
 
   updateAnomaly: (
+    http: HttpFn,
     anomalyId: number,
     payload: UpdateAnomalyDto
   ): Promise<AnomalyDto> =>
-    http(`/api/anomalies/${anomalyId}`, {
+    http<AnomalyDto>(`/api/anomalies/${anomalyId}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
@@ -56,17 +59,17 @@ export const WorkbenchApi = {
   /* Management / Admin                                   */
   /* ===================================================== */
 
-  getAll: (): Promise<WorkbenchDto[]> =>
-    http('/api/workbenches/all'),
+  getAll: (http: HttpFn): Promise<WorkbenchDto[]> =>
+    http<WorkbenchDto[]>('/api/workbenches/all'),
 
-  create: (name: string, description?: string): Promise<WorkbenchDto> =>
-    http('/api/workbenches', {
+  create: (http: HttpFn, name: string, description?: string): Promise<WorkbenchDto> =>
+    http<WorkbenchDto>('/api/workbenches', {
       method: 'POST',
       body: JSON.stringify({ name, description }),
     }),
 
-  deactivate: (id: number): Promise<WorkbenchDto> =>
-    http(`/api/workbenches/${id}/deactivate`, {
+  deactivate: (http: HttpFn, id: number): Promise<WorkbenchDto> =>
+    http<WorkbenchDto>(`/api/workbenches/${id}/deactivate`, {
       method: 'POST',
     }),
 };
