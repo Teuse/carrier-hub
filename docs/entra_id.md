@@ -20,10 +20,11 @@ This step-by-step is for someone who has permissions to register a new applicati
     - Under Account-types select "only accounts in organizational structure" (german: "Nur Konten in diesem Organisationsverzeichnis")
     - Under Redirect URI
         - for the frontend select as platform "Single-Page Application" and add a redirect URI, e.g. `http://localhost/dashboard/overview` (Azure ignores the ports for localhost redirects. See [here](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url#localhost-exceptions))
-        - for the backend select as platform "Web" and add a redirect URI, e.g. `http://localhost/api/dashboard/overview` (to be honest, I am not sure if a redirect URI is required for the backend)
+        - for the backend select as platform "Web" and add a redirect URI, e.g. `http://localhost/api/dashboard/overview` (to be honest, I am not sure if a redirect URI is required for the backend).
 - Click "Register"
 - Give your application a meaningful name
 - You will then be presented with your application IDs. You need the Client-ID (german: "Anwendungs-ID (Client)"), Tenant-ID (german: "Verzeichnis-ID (Mandant)")
+- For the backend only, under "Certificates & Secrets" add a secret and write it down somewhere safe. It is needed in order to allow the application to make GraphAPI requests for the user
 
 ### Expose the API
 
@@ -35,6 +36,10 @@ In order for the frontend to see the application in Azure, you need to expose th
     - Give the scope a name, e.g. "user_scope"
     - Below that, choose "Admins and Users" and fill out the other fields with names and descriptions
     - For "status" select "Active"
+- Next, navigate to "API-permissions" in order to give the backend permission to use the GraphAPI for fetching more user informations and the sharepoint lists
+- Click on "Add permissions", under "Microsoft APIs" select "Microsoft Graph". Select "delegate permission"
+- Search for "Sites" and check the permissions `Sites.Read.All` and `Sites.ReadWrite.All` and add them
+- Finally, select "Grant administrator consent for “Default Directory”" (german: Administratorzustimmung für "Default Directory" erteilen) and make sure all the permission get a green check in the column "status"
 
 ### Create and assign roles
 
