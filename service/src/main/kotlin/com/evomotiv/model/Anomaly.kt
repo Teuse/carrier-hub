@@ -28,5 +28,5 @@ data class Anomaly (
     val createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: Instant? = null,
+    var updatedAt: Instant = Instant.now(),
 )
