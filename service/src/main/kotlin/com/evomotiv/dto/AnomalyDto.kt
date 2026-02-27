@@ -12,7 +12,8 @@ data class AnomalyDto(
     val workbench: WorkbenchDto,
     val status: AnomalyStatus,
     val createdAt: Instant,
-    val updatedAt: Instant?
+    val updatedAt: Instant?,
+    val createdBy: String?,
 )
 
 data class CreateAnomalyDto(
@@ -20,6 +21,7 @@ data class CreateAnomalyDto(
     val pn: String?,
     val kz: String?,
     val notes: String?,
+    val createdBy: String?
 )
 
 data class UpdateAnomalyDto(

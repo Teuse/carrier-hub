@@ -12,5 +12,6 @@ fun Anomaly.toDto() = AnomalyDto(
     workbench = workbench.toDto(),
     status = status,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    createdBy = createdBy
 )

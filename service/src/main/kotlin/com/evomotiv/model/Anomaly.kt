@@ -27,6 +27,12 @@ data class Anomaly (
     @Column(name = "created_at", nullable = false)
     val createdAt: Instant = Instant.now(),
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant = Instant.now(),
+
+    @Column(name = "sharepoint_item_id")
+    var sharepointItemId: String? = null,
+
+    @Column(name = "created_by")
+    var createdBy: String? = null
 )

@@ -262,13 +262,17 @@ export default function AnomalyRow({
                 Created at: {new Date(anomaly.createdAt).toLocaleString()}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Workbench: {anomaly.workbench?.name ?? 'N/A'}
+                Created by: {anomaly.createdBy}
               </Typography>
               {anomaly.updatedAt && (
                 <Typography variant="body2" color="text.secondary">
                   Updated at: {new Date(anomaly.updatedAt).toLocaleString()}
                 </Typography>
               )}
+              <Typography variant="body2" color="text.secondary">
+                Workbench: {anomaly.workbench?.name ?? 'N/A'}
+              </Typography>
+
 
             </Box>
           </Collapse>

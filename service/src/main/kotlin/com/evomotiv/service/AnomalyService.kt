@@ -9,6 +9,8 @@ import com.evomotiv.model.AnomalyStatus
 import com.evomotiv.repository.AnomalyRepository
 import com.evomotiv.repository.WorkbenchRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
@@ -34,6 +36,9 @@ class AnomalyService(
         val workbench = workbenchRepo.findById(workbenchId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Workbench not found") }
 
+        val email = (SecurityContextHolder.getContext().authentication as JwtAuthenticationToken)
+            .token.getClaimAsString("email")
+
         val anomaly = Anomaly(
             van = dto.van,
             kz = dto.kz,
@@ -41,7 +46,8 @@ class AnomalyService(
             notes = dto.notes,
             workbench = workbench,
             status = AnomalyStatus.REPORTED,
-            createdAt = Instant.now()
+            createdAt = Instant.now(),
+            createdBy = email
         )
         return anomalyRepo.save(anomaly).toDto()
     }

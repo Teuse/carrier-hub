@@ -18,8 +18,11 @@ CREATE TABLE anomaly (
     status TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_by TEXT,
 
     workbench_id BIGINT NOT NULL,
+
+    sharepoint_item_id TEXT,
 
     CONSTRAINT fk_anomaly_workbench
         FOREIGN KEY (workbench_id)
