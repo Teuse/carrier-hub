@@ -44,6 +44,16 @@ export default function AnomaliesPage() {
     }
   };
 
+  const updateAnomalyNotes = async (anomalyId: number, notes: string) => {
+    try {
+      await WorkbenchApi.updateAnomaly(anomalyId, { notes });
+      await loadAnomalies();
+    } catch {
+      setError("Failed to update anomaly notes");
+    }
+  };
+
+
   /* ====================================================== */
 
   return (
@@ -69,6 +79,7 @@ export default function AnomaliesPage() {
           title="Reported Anomalies"
           anomalies={anomalies}
           onStatusChange={updateAnomalyStatus}
+          onNotesChange={updateAnomalyNotes}
         />
       )}
     </Box>

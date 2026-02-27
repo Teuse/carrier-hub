@@ -20,12 +20,14 @@ interface AnomalyTableProps {
     id: number,
     status: "ACCEPTED_BY_PQ" | "DECLINED_BY_PQ",
   ) => void;
+  onNotesChange?: (id: number, notes: string) => Promise<void>;
 }
 
 export default function AnomalyTable({
   title,
   anomalies,
   onStatusChange,
+  onNotesChange,
 }: AnomalyTableProps) {
   const sortedAnomalies = useMemo(
     () =>
@@ -61,6 +63,7 @@ export default function AnomalyTable({
                 key={a.id}
                 anomaly={a}
                 onStatusChange={onStatusChange}
+                onNotesChange={onNotesChange}
               />
             ))}
           </TableBody>
