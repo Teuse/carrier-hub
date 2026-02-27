@@ -17,7 +17,7 @@ interface AnomalyTableProps {
   title: string;
   anomalies: AnomalyDto[];
   isAdmin: boolean;
-  onStatusChange?: (id: number, status: "ACCEPTED_BY_PQ" | "DECLINED_BY_PQ") => void;
+  onStatusChange?: (id: number, status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ' | 'REPORTED') => void;
   onNotesChange?: (id: number, notes: string) => Promise<void>;
   onEdit?: (id: number, fields: { van?: string; pn?: string; kz?: string }) => Promise<void>;
   onDelete?: (id: number) => Promise<void>;

@@ -36,7 +36,7 @@ import type { AnomalyDto, AnomalyStatus } from '../api';
 interface Props {
   anomaly: AnomalyDto;
   isAdmin: boolean;
-  onStatusChange?: (id: number, status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ') => void;
+  onStatusChange?: (id: number, status: AnomalyStatus) => void;
   onNotesChange?: (id: number, notes: string) => Promise<void>;
   onEdit?: (id: number, fields: { van?: string; pn?: string; kz?: string }) => Promise<void>;
   onDelete?: (id: number) => Promise<void>;
@@ -72,8 +72,6 @@ export default function AnomalyRow({
   // Delete dialog
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const isReported = anomaly.status === 'REPORTED';
 
   /* ---------- Notes ---------- */
 
@@ -173,16 +171,22 @@ export default function AnomalyRow({
                 <IconButton
                   size="small"
                   color="success"
-                  disabled={!isReported}
-                  onClick={() => onStatusChange(anomaly.id, 'ACCEPTED_BY_PQ')}
+                  disabled={anomaly.status === 'ACCEPTED_BY_PQ'}
+                  onClick={() => onStatusChange(
+                    anomaly.id,
+                    anomaly.status === 'ACCEPTED_BY_PQ' ? 'REPORTED' : 'ACCEPTED_BY_PQ'
+                  )}
                 >
                   <CheckIcon />
                 </IconButton>
                 <IconButton
                   size="small"
                   color="error"
-                  disabled={!isReported}
-                  onClick={() => onStatusChange(anomaly.id, 'DECLINED_BY_PQ')}
+                  disabled={anomaly.status === 'DECLINED_BY_PQ'}
+                  onClick={() => onStatusChange(
+                    anomaly.id,
+                    anomaly.status === 'DECLINED_BY_PQ' ? 'REPORTED' : 'DECLINED_BY_PQ'
+                  )}
                 >
                   <CloseIcon />
                 </IconButton>
@@ -259,20 +263,24 @@ export default function AnomalyRow({
               )}
 
               <Typography variant="body2" color="text.secondary">
-                Created at: {new Date(anomaly.createdAt).toLocaleString()}
+                Accepted/Declined by: {anomaly.createdBy ?? 'N/A'}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Created by: {anomaly.createdBy}
-              </Typography>
+              {anomaly.reviewedBy && (
+                <Typography variant="body2" color="text.secondary">
+                  Reviewed by: {anomaly.reviewedBy}
+                </Typography>
+              )}
               {anomaly.updatedAt && (
                 <Typography variant="body2" color="text.secondary">
                   Updated at: {new Date(anomaly.updatedAt).toLocaleString()}
                 </Typography>
               )}
               <Typography variant="body2" color="text.secondary">
+                Created at: {new Date(anomaly.createdAt).toLocaleString()}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
                 Workbench: {anomaly.workbench?.name ?? 'N/A'}
               </Typography>
-
 
             </Box>
           </Collapse>

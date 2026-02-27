@@ -56,12 +56,18 @@ class AnomalyService(
         val anomaly = anomalyRepo.findById(anomalyId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Anomaly not found") }
 
+        val email = (SecurityContextHolder.getContext().authentication as JwtAuthenticationToken)
+            .token.getClaimAsString("email")
+
         anomaly.apply {
             updatedAt = Instant.now()
             dto.van?.let { van = it }
             dto.pn?.let { pn = it }
             dto.kz?.let { kz = it }
-            dto.status?.let { status = it }
+            dto.status?.let {
+                anomaly.status = it
+                anomaly.reviewedBy = if (it == AnomalyStatus.REPORTED) null else email
+            }
             dto.notes?.let { notes = it }
         }
 

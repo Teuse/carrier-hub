@@ -34,5 +34,8 @@ data class Anomaly (
     var sharepointItemId: String? = null,
 
     @Column(name = "created_by")
-    var createdBy: String? = null
+    var createdBy: String? = null,
+
+    @Column(name = "reviewed_by")
+    var reviewedBy: String? = null
 )

@@ -60,6 +60,7 @@ export interface AnomalyDto {
   createdAt: string;
   updatedAt?: string;
   createdBy?: string;
+  reviewedBy?: string;
 }
 
 export type AnomalyStatus =

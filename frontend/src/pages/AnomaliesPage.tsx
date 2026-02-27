@@ -35,7 +35,7 @@ export default function AnomaliesPage() {
 
   const updateAnomalyStatus = async (
     anomalyId: number,
-    status: "ACCEPTED_BY_PQ" | "DECLINED_BY_PQ",
+    status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ' | 'REPORTED',
   ) => {
     try {
       await WorkbenchApi.updateAnomaly(anomalyId, { status });

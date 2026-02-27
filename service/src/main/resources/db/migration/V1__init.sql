@@ -19,6 +19,7 @@ CREATE TABLE anomaly (
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now(),
     created_by TEXT,
+    reviewed_by TEXT,
 
     workbench_id BIGINT NOT NULL,
 
