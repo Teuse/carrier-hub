@@ -20,4 +20,8 @@ class AnomalyController(
         @RequestBody dto: UpdateAnomalyDto
     ): AnomalyDto =
         anomalyService.updateAnomaly(id, dto)
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id: Long) = anomalyService.delete(id)
 }

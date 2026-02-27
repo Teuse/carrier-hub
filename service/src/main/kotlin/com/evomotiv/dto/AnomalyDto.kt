@@ -23,6 +23,9 @@ data class CreateAnomalyDto(
 )
 
 data class UpdateAnomalyDto(
+    val van: String?,
+    val pn: String?,
+    val kz: String?,
     val notes: String?,
     val status: AnomalyStatus?
 )

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
+import java.util.Optional
 
 @Service
 class AnomalyService(
@@ -49,13 +50,23 @@ class AnomalyService(
         val anomaly = anomalyRepo.findById(anomalyId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Anomaly not found") }
 
-        anomaly.updatedAt = Instant.now()
-        dto.status?.let { status ->
-            anomaly.status = status
+        anomaly.apply {
+            updatedAt = Instant.now()
+            dto.van?.let { van = it }
+            dto.pn?.let { pn = it }
+            dto.kz?.let { kz = it }
+            dto.status?.let { status = it }
+            dto.notes?.let { notes = it }
         }
-        dto.notes?.let { notes ->
-            anomaly.notes = notes
-        }
+
         return anomalyRepo.save(anomaly).toDto()
+    }
+
+    fun delete(id: Long) {
+        if (anomalyRepo.existsById(id)) {
+            anomalyRepo.deleteById(id)
+        } else {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Anomaly not found")
+        }
     }
 }

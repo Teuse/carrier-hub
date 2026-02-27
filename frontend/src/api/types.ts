@@ -76,4 +76,7 @@ export interface CreateAnomalyDto {
 export interface UpdateAnomalyDto {
   status?: AnomalyStatus;
   notes?: string;
+  van?: string;
+  pn?: string;
+  kz?: string;
 }

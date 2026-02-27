@@ -57,7 +57,13 @@ export const WorkbenchApi = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-  }),
+    }),
+
+  deleteAnomaly: (anomalyId: number): Promise<void> =>
+    http(`/api/anomalies/${anomalyId}`, {
+      method: 'DELETE',
+    }),
+
   /* ===================================================== */
   /* Management / Admin                                   */
   /* ===================================================== */

@@ -3,6 +3,7 @@ import { Box, Typography, Alert, CircularProgress } from "@mui/material";
 
 import { WorkbenchApi } from "../api";
 import type { AnomalyDto } from "../api";
+import { isAdmin } from "../auth";
 import AnomalyTable from "../components/AnomalyTable";
 
 /* ====================================================== */
@@ -11,20 +12,20 @@ export default function AnomaliesPage() {
   const [anomalies, setAnomalies] = useState<AnomalyDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [admin, setAdmin] = useState(false);
 
   /* ====================================================== */
 
   useEffect(() => {
-    loadAnomalies();
+    void isAdmin().then(setAdmin);
+    void loadAnomalies();
   }, []);
 
   const loadAnomalies = async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const data = await WorkbenchApi.getAllAnomalies();
-      setAnomalies(data);
+      setAnomalies(await WorkbenchApi.getAllAnomalies());
     } catch {
       setError("Failed to load anomalies");
     } finally {
@@ -53,6 +54,26 @@ export default function AnomaliesPage() {
     }
   };
 
+  const updateAnomalyFields = async (
+    anomalyId: number,
+    fields: { van?: string; pn?: string; kz?: string },
+  ) => {
+    try {
+      await WorkbenchApi.updateAnomaly(anomalyId, fields);
+      await loadAnomalies();
+    } catch {
+      setError("Failed to update anomaly");
+    }
+  };
+
+  const deleteAnomaly = async (anomalyId: number) => {
+    try {
+      await WorkbenchApi.deleteAnomaly(anomalyId);
+      await loadAnomalies();
+    } catch {
+      setError("Failed to delete anomaly");
+    }
+  };
 
   /* ====================================================== */
 
@@ -78,8 +99,11 @@ export default function AnomaliesPage() {
         <AnomalyTable
           title="Reported Anomalies"
           anomalies={anomalies}
+          isAdmin={admin}
           onStatusChange={updateAnomalyStatus}
           onNotesChange={updateAnomalyNotes}
+          onEdit={updateAnomalyFields}
+          onDelete={deleteAnomaly}
         />
       )}
     </Box>
