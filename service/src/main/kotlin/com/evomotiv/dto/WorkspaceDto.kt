@@ -1,13 +1,13 @@
 package com.evomotiv.dto
 
-data class WorkbenchDto(
+data class WorkspaceDto(
     val id: Long,
     val name: String,
     val description: String?,
     val active: Boolean
 )
 
-data class CreateWorkbenchDto(
+data class CreateWorkspaceDto(
     val name: String,
     val description: String? = null
 )

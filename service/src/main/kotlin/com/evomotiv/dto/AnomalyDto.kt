@@ -9,7 +9,7 @@ data class AnomalyDto(
     val pn: String?,
     val kz: String?,
     val notes: String?,
-    val workbench: WorkbenchDto,
+    val workspace: WorkspaceDto,
     val status: AnomalyStatus,
     val createdAt: Instant,
     val updatedAt: Instant?,

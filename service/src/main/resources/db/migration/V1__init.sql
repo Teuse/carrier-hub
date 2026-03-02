@@ -1,12 +1,12 @@
--- Workbenches
-CREATE TABLE workbench (
+-- Workspaces
+CREATE TABLE workspace (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
     active BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE UNIQUE INDEX ux_workbench_name ON workbench(name);
+CREATE UNIQUE INDEX ux_workspace_name ON workspace(name);
 
 -- Anomalies
 CREATE TABLE anomaly (
@@ -21,13 +21,13 @@ CREATE TABLE anomaly (
     created_by TEXT,
     reviewed_by TEXT,
 
-    workbench_id BIGINT NOT NULL,
+    workspace_id BIGINT NOT NULL,
 
     sharepoint_item_id TEXT,
 
-    CONSTRAINT fk_anomaly_workbench
-        FOREIGN KEY (workbench_id)
-        REFERENCES workbench(id)
+    CONSTRAINT fk_anomaly_workspace
+        FOREIGN KEY (workspace_id)
+        REFERENCES workspace(id)
 );
 
 -- Load carrier templates (predefined)
@@ -46,7 +46,7 @@ CREATE TABLE load_carrier (
 CREATE TABLE load_carrier_request (
     id BIGSERIAL PRIMARY KEY,
 
-    workbench_id BIGINT NOT NULL,
+    workspace_id BIGINT NOT NULL,
     load_carrier_id BIGINT NOT NULL,
     comment TEXT,
     priority TEXT NOT NULL,
@@ -56,9 +56,9 @@ CREATE TABLE load_carrier_request (
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     delivered_at TIMESTAMP,
 
-    CONSTRAINT fk_request_workbench
-        FOREIGN KEY (workbench_id)
-        REFERENCES workbench (id),
+    CONSTRAINT fk_request_workspace
+        FOREIGN KEY (workspace_id)
+        REFERENCES workspace (id),
 
     CONSTRAINT fk_request_load_carrier
         FOREIGN KEY (load_carrier_id)
@@ -66,5 +66,5 @@ CREATE TABLE load_carrier_request (
 );
 
 -- Indexes (recommended)
---CREATE INDEX idx_request_workbench_id ON load_carrier_request(workbench_id);
+--CREATE INDEX idx_request_workspace_id ON load_carrier_request(workspace_id);
 --CREATE INDEX idx_request_status ON load_carrier_request(status);

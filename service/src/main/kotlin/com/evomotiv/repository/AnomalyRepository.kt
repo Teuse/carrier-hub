@@ -6,12 +6,12 @@ import org.springframework.data.jpa.repository.Query
 
 interface AnomalyRepository : JpaRepository<Anomaly, Long> {
 
-    fun findByWorkbenchId(workbenchId: Long): List<Anomaly>
+    fun findByWorkspaceId(workspaceId: Long): List<Anomaly>
 
     @Query("""
     select a
     from Anomaly a
-    join fetch a.workbench
+    join fetch a.workspace
     """)
-    fun findAllWithWorkbench(): List<Anomaly>
+    fun findAllWithWorkspace(): List<Anomaly>
 }

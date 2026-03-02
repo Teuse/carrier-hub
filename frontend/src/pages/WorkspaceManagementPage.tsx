@@ -19,12 +19,12 @@ import {
   Stack,
   Alert,
 } from '@mui/material';
-import { WorkbenchApi } from '../api';
-import type { WorkbenchDto } from '../api';
+import { WorkspaceApi } from '../api';
+import type { WorkspaceDto } from '../api';
 import { isAdmin } from '../auth';
 
-export default function WorkbenchManagementPage() {
-  const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
+export default function WorkspaceManagementPage() {
+  const [workspaces, setWorkspaces] = useState<WorkspaceDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
@@ -38,7 +38,7 @@ export default function WorkbenchManagementPage() {
   const load = async () => {
     setError(null);
     try {
-      setWorkbenches(await WorkbenchApi.getAll());
+      setWorkspaces(await WorkspaceApi.getAll());
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load');
     }
@@ -50,7 +50,7 @@ export default function WorkbenchManagementPage() {
 
   const handleCreate = async () => {
     try {
-      await WorkbenchApi.create(name, description || undefined);
+      await WorkspaceApi.create(name, description || undefined);
       setName('');
       setDescription('');
       setOpen(false);
@@ -61,7 +61,7 @@ export default function WorkbenchManagementPage() {
   };
 
   const handleDeactivate = async (id: number) => {
-    await WorkbenchApi.deactivate(id);
+    await WorkspaceApi.deactivate(id);
     await load();
   };
 
@@ -73,7 +73,7 @@ export default function WorkbenchManagementPage() {
         alignItems="center"
         sx={{ mb: 3 }}
       >
-        <Typography variant="h4">Workbench Management</Typography>
+        <Typography variant="h4">Workspace Management</Typography>
 
         <Button
           variant="contained"
@@ -81,7 +81,7 @@ export default function WorkbenchManagementPage() {
           disabled={!admin}
           onClick={() => setOpen(true)}
         >
-          Add Workbench
+          Add Workspace
         </Button>
       </Stack>
 
@@ -103,7 +103,7 @@ export default function WorkbenchManagementPage() {
           </TableHead>
 
           <TableBody>
-            {workbenches.map((wb) => (
+            {workspaces.map((wb) => (
               <TableRow key={wb.id}>
                 <TableCell>{wb.name}</TableCell>
                 <TableCell>{wb.description ?? '-'}</TableCell>
@@ -132,7 +132,7 @@ export default function WorkbenchManagementPage() {
       </TableContainer>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{admin ? 'Add Workbench' : 'Add Workbench (Admins only)'}</DialogTitle>
+        <DialogTitle>{admin ? 'Add Workspace' : 'Add Workspace (Admins only)'}</DialogTitle>
 
         <DialogContent>
           <TextField

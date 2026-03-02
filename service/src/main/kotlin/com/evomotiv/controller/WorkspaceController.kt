@@ -3,32 +3,32 @@ package com.evomotiv.controller
 import com.evomotiv.dto.*
 import com.evomotiv.service.AnomalyService
 import com.evomotiv.service.LoadCarrierRequestService
-import com.evomotiv.service.WorkbenchService
+import com.evomotiv.service.WorkspaceService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "Workbench", description = "Workbench operations")
+@Tag(name = "Workspace", description = "Workspace operations")
 @RestController
-@RequestMapping("/api/workbenches")
-class WorkbenchController(
+@RequestMapping("/api/workspaces")
+class WorkspaceController(
     private val loadCarrierRequestService: LoadCarrierRequestService,
-    private val wbService: WorkbenchService,
+    private val wbService: WorkspaceService,
     private val anomalyService: AnomalyService
 ) {
     @GetMapping("/all")
-    fun getAll(): List<WorkbenchDto> =
+    fun getAll(): List<WorkspaceDto> =
         wbService.getAll()
 
     @GetMapping
-    fun getActive(): List<WorkbenchDto> =
+    fun getActive(): List<WorkspaceDto> =
         wbService.getAllActive()
 
     @PostMapping
-    fun create(@RequestBody body: CreateWorkbenchDto): WorkbenchDto =
+    fun create(@RequestBody body: CreateWorkspaceDto): WorkspaceDto =
         wbService.create(body.name, body.description)
 
     @PostMapping("/{id}/deactivate")
-    fun deactivate(@PathVariable id: Long): WorkbenchDto =
+    fun deactivate(@PathVariable id: Long): WorkspaceDto =
         wbService.deactivate(id)
 
     /* ===================== */
@@ -37,7 +37,7 @@ class WorkbenchController(
 
     @GetMapping("/{id}/requests")
     fun getRequests(@PathVariable id: Long): List<LoadCarrierRequestDto> =
-        loadCarrierRequestService.getByWorkbench(id)
+        loadCarrierRequestService.getByWorkspace(id)
 
     @PostMapping("/{id}/requests")
     fun createRequest(
@@ -52,7 +52,7 @@ class WorkbenchController(
 
     @GetMapping("/{id}/anomalies")
     fun getAnomalies(@PathVariable id: Long): List<AnomalyDto> =
-        anomalyService.getAllByWorkbench(id)
+        anomalyService.getAllByWorkspace(id)
 
     @PostMapping("/{id}/anomalies")
     fun createAnomaly(

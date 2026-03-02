@@ -9,8 +9,8 @@ export interface DashboardOverviewDto {
   avgLeadTimeMinutes: number;
 
   requestsByStatus: Record<string, number>;
-  requestsByWorkbench: {
-    workbenchName: string;
+  requestsByWorkspace: {
+    workspaceName: string;
     openRequests: number;
   }[];
 }

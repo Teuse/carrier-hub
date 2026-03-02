@@ -10,10 +10,10 @@ data class DashboardOverviewDto(
     val avgLeadTimeMinutes: Long,
 
     val requestsByStatus: Map<String, Long>,
-    val requestsByWorkbench: List<WorkbenchCountDto>
+    val requestsByWorkspace: List<WorkspaceCountDto>
 )
 
-data class WorkbenchCountDto(
-    val workbenchName: String,
+data class WorkspaceCountDto(
+    val workspaceName: String,
     val openRequests: Long
 )

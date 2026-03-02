@@ -1,9 +1,9 @@
 package com.evomotiv.mapper
 
-import com.evomotiv.dto.WorkbenchDto
-import com.evomotiv.model.Workbench
+import com.evomotiv.dto.WorkspaceDto
+import com.evomotiv.model.Workspace
 
-fun Workbench.toDto() = WorkbenchDto(
+fun Workspace.toDto() = WorkspaceDto(
     id = id,
     name = name,
     description = description,

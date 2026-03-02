@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
-import WorkBenchPage from "./pages/WorkBenchPage";
+import WorkspacePage from "./pages/WorkspacePage";
 import LogisticsPage from "./pages/LogisticsPage";
 import WarehousePage from "./pages/WarehousePage";
 import AnomaliesPage from "./pages/AnomaliesPage";
-import WorkbenchManagementPage from "./pages/WorkbenchManagementPage";
+import WorkspaceManagementPage from "./pages/WorkspaceManagementPage";
 import LoadCarrierManagementPage from './pages/LoadCarrierManagementPage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
@@ -52,10 +52,10 @@ export default function App() {
             <Routes>
               <Route path="/dashboard/overview" element={<Dashboard />} />
               <Route path="/anomalies" element={<AnomaliesPage />} />
-              <Route path="/workbench" element={<WorkBenchPage />} />
+              <Route path="/workspace" element={<WorkspacePage />} />
               <Route path="/logistics" element={<LogisticsPage />} />
               <Route path="/warehouse" element={<WarehousePage />} />
-              <Route path="/workbenches/manage" element={<WorkbenchManagementPage />} />
+              <Route path="/workspaces/manage" element={<WorkspaceManagementPage />} />
               <Route path="/load-carriers/manage" element={<LoadCarrierManagementPage />} />
               
               {/* Redirect root to dashboard */}

@@ -279,7 +279,7 @@ export default function AnomalyRow({
                 Created at: {new Date(anomaly.createdAt).toLocaleString()}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Workbench: {anomaly.workbench?.name ?? 'N/A'}
+                Workspace: {anomaly.workspace?.name ?? 'N/A'}
               </Typography>
 
             </Box>

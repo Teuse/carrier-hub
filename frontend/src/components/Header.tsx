@@ -56,10 +56,10 @@ export default function Header() {
         </Button>
 
         <Button
-          onClick={() => navigate("/workbench")}
+          onClick={() => navigate("/workspace")}
           sx={{
-            color: isActive("/workbench") ? "primary.main" : "#ffffff",
-            fontWeight: isActive("/workbench") ? 600 : 400,
+            color: isActive("/workspace") ? "primary.main" : "#ffffff",
+            fontWeight: isActive("/workspace") ? 600 : 400,
           }}
         >
           Workspace
@@ -101,10 +101,10 @@ export default function Header() {
           <MenuItem
             onClick={() => {
               setAnchorEl(null);
-              navigate("/workbenches/manage");
+              navigate("/workspaces/manage");
             }}
           >
-            Workbench Management
+            Workspace Management
           </MenuItem>
 
           <MenuItem

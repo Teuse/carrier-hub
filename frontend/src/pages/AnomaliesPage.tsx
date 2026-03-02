@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Alert, CircularProgress } from "@mui/material";
 
-import { WorkbenchApi } from "../api";
+import { WorkspaceApi } from "../api";
 import type { AnomalyDto } from "../api";
 import { isAdmin } from "../auth";
 import AnomalyTable from "../components/AnomalyTable";
@@ -25,7 +25,7 @@ export default function AnomaliesPage() {
     setIsLoading(true);
     setError(null);
     try {
-      setAnomalies(await WorkbenchApi.getAllAnomalies());
+      setAnomalies(await WorkspaceApi.getAllAnomalies());
     } catch {
       setError("Failed to load anomalies");
     } finally {
@@ -38,7 +38,7 @@ export default function AnomaliesPage() {
     status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ' | 'REPORTED',
   ) => {
     try {
-      await WorkbenchApi.updateAnomaly(anomalyId, { status });
+      await WorkspaceApi.updateAnomaly(anomalyId, { status });
       await loadAnomalies();
     } catch {
       setError("Failed to update anomaly status");
@@ -47,7 +47,7 @@ export default function AnomaliesPage() {
 
   const updateAnomalyNotes = async (anomalyId: number, notes: string) => {
     try {
-      await WorkbenchApi.updateAnomaly(anomalyId, { notes });
+      await WorkspaceApi.updateAnomaly(anomalyId, { notes });
       await loadAnomalies();
     } catch {
       setError("Failed to update anomaly notes");
@@ -59,7 +59,7 @@ export default function AnomaliesPage() {
     fields: { van?: string; pn?: string; kz?: string },
   ) => {
     try {
-      await WorkbenchApi.updateAnomaly(anomalyId, fields);
+      await WorkspaceApi.updateAnomaly(anomalyId, fields);
       await loadAnomalies();
     } catch {
       setError("Failed to update anomaly");
@@ -68,7 +68,7 @@ export default function AnomaliesPage() {
 
   const deleteAnomaly = async (anomalyId: number) => {
     try {
-      await WorkbenchApi.deleteAnomaly(anomalyId);
+      await WorkspaceApi.deleteAnomaly(anomalyId);
       await loadAnomalies();
     } catch {
       setError("Failed to delete anomaly");

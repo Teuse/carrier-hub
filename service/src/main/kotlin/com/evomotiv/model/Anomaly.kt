@@ -17,8 +17,8 @@ data class Anomaly (
     var notes: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "workbench_id", nullable = false)
-    var workbench: Workbench,
+    @JoinColumn(name = "workspace_id", nullable = false)
+    var workspace: Workspace,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

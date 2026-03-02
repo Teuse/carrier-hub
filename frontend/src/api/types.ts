@@ -1,8 +1,8 @@
 /* ===================================================== */
-/* Workbench                                             */
+/* Workspace                                             */
 /* ===================================================== */
 
-export interface WorkbenchDto {
+export interface WorkspaceDto {
   id: number;
   name: string;
   description?: string;
@@ -28,8 +28,8 @@ export type LoadCarrierRequestStatus =
 
 export interface LoadCarrierRequestDto {
   id: number;
-  workbenchId: number;
-  workbenchName: string;
+  workspaceId: number;
+  workspaceName: string;
   loadCarrierId: number;
   loadCarrierName: string;
   comment?: string;
@@ -55,7 +55,7 @@ export interface AnomalyDto {
   pn?: string;
   kz?: string;
   notes?: string;
-  workbench: WorkbenchDto;
+  workspace: WorkspaceDto;
   status: AnomalyStatus;
   createdAt: string;
   updatedAt?: string;

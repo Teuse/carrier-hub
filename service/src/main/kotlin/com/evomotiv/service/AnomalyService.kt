@@ -7,7 +7,7 @@ import com.evomotiv.mapper.toDto
 import com.evomotiv.model.Anomaly
 import com.evomotiv.model.AnomalyStatus
 import com.evomotiv.repository.AnomalyRepository
-import com.evomotiv.repository.WorkbenchRepository
+import com.evomotiv.repository.WorkspaceRepository
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -20,21 +20,21 @@ import java.util.Optional
 @Service
 class AnomalyService(
     private val anomalyRepo: AnomalyRepository,
-    private val workbenchRepo: WorkbenchRepository
+    private val workspaceRepo: WorkspaceRepository
 ) {
 
     @Transactional(readOnly = true)
     fun getAll(): List<AnomalyDto> =
-        anomalyRepo.findAllWithWorkbench()
+        anomalyRepo.findAllWithWorkspace()
             .map { it.toDto() }
 
-    fun getAllByWorkbench(workbenchId: Long): List<AnomalyDto> =
-        anomalyRepo.findByWorkbenchId(workbenchId)
+    fun getAllByWorkspace(workspaceId: Long): List<AnomalyDto> =
+        anomalyRepo.findByWorkspaceId(workspaceId)
             .map { it.toDto() }
 
-    fun createAnomaly(workbenchId: Long, dto: CreateAnomalyDto): AnomalyDto {
-        val workbench = workbenchRepo.findById(workbenchId)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Workbench not found") }
+    fun createAnomaly(workspaceId: Long, dto: CreateAnomalyDto): AnomalyDto {
+        val workspace = workspaceRepo.findById(workspaceId)
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Workspace not found") }
 
         val email = (SecurityContextHolder.getContext().authentication as JwtAuthenticationToken)
             .token.getClaimAsString("email")
@@ -44,7 +44,7 @@ class AnomalyService(
             kz = dto.kz,
             pn = dto.pn,
             notes = dto.notes,
-            workbench = workbench,
+            workspace = workspace,
             status = AnomalyStatus.REPORTED,
             createdAt = Instant.now(),
             createdBy = email

@@ -128,30 +128,30 @@ export default function Dashboard() {
         </Stack>
       </Paper>
 
-      {/* ================= WORKBENCHES ================= */}
+      {/* ================= WORKSPACES ================= */}
       <Paper sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Open Requests by Workbench
+          Open Requests by Workspace
         </Typography>
 
         <Divider sx={{ mb: 2 }} />
 
         <Stack spacing={1}>
-          {data.requestsByWorkbench.length === 0 && (
+          {data.requestsByWorkspace.length === 0 && (
             <Typography color="text.secondary">
               No open requests
             </Typography>
           )}
 
-          {data.requestsByWorkbench.map((w) => (
+          {data.requestsByWorkspace.map((w) => (
             <Box
-              key={w.workbenchName}
+              key={w.workspaceName}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
             >
-              <Typography>{w.workbenchName}</Typography>
+              <Typography>{w.workspaceName}</Typography>
               <Typography>{w.openRequests}</Typography>
             </Box>
           ))}

@@ -10,15 +10,15 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-import WorkbenchSelector from "../components/WorkbenchSelector";
+import WorkspaceSelector from "../components/WorkspaceSelector";
 import RequestLoadCarrierDialog from "../components/RequestLoadCarrierDialog";
 import RequestTable from "../components/RequestTable";
 import ReportAnomalyDialog from "../components/ReportAnomalyDialog";
 
-import { WorkbenchApi } from "../api";
+import { WorkspaceApi } from "../api";
 import type {
   LoadCarrierRequestDto,
-  WorkbenchDto,
+  WorkspaceDto,
   RequestPriority,
   AnomalyDto,
   CreateAnomalyDto,
@@ -27,17 +27,17 @@ import AnomalyTable from "../components/AnomalyTable";
 
 /* ====================================================== */
 
-const STORAGE_KEY = "selectedWorkbenchId";
+const STORAGE_KEY = "selectedWorkspaceId";
 
 /* ====================================================== */
 
-export default function WorkbenchPage() {
+export default function WorkspacePage() {
   /* ---------- sidebar ---------- */
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ---------- workbenches ---------- */
-  const [workbenches, setWorkbenches] = useState<WorkbenchDto[]>([]);
-  const [selectedWorkbenchId, setSelectedWorkbenchId] = useState<number | null>(
+  /* ---------- workspaces ---------- */
+  const [workspaces, setWorkspaces] = useState<WorkspaceDto[]>([]);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<number | null>(
     () => {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? Number(stored) : null;
@@ -58,8 +58,8 @@ export default function WorkbenchPage() {
 
   /* ====================================================== */
 
-  const selectedWorkbench = workbenches.find(
-    (w) => w.id === selectedWorkbenchId,
+  const selectedWorkspace = workspaces.find(
+    (w) => w.id === selectedWorkspaceId,
   );
 
   const sortedRequests = useMemo(
@@ -83,27 +83,27 @@ export default function WorkbenchPage() {
   /* ====================================================== */
 
   useEffect(() => {
-    WorkbenchApi.getActive().then(setWorkbenches);
+    WorkspaceApi.getActive().then(setWorkspaces);
   }, []);
 
   useEffect(() => {
-    if (selectedWorkbenchId) {
-      loadRequests(selectedWorkbenchId);
-      loadAnomalies(selectedWorkbenchId);
+    if (selectedWorkspaceId) {
+      loadRequests(selectedWorkspaceId);
+      loadAnomalies(selectedWorkspaceId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWorkbenchId]);
+  }, [selectedWorkspaceId]);
 
   /* ====================================================== */
   /* Loaders                                                */
   /* ====================================================== */
 
-  const loadRequests = async (workbenchId: number) => {
+  const loadRequests = async (workspaceId: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const data = await WorkbenchApi.getRequests(workbenchId);
+      const data = await WorkspaceApi.getRequests(workspaceId);
       setRequests(data);
     } catch {
       setError("Failed to load requests");
@@ -112,9 +112,9 @@ export default function WorkbenchPage() {
     }
   };
 
-  const loadAnomalies = async (workbenchId: number) => {
+  const loadAnomalies = async (workspaceId: number) => {
     try {
-      const data = await WorkbenchApi.getAnomalies(workbenchId);
+      const data = await WorkspaceApi.getAnomalies(workspaceId);
       setAnomalies(data);
     } catch {
       setError("Failed to load anomalies");
@@ -130,15 +130,15 @@ export default function WorkbenchPage() {
     comment?: string;
     priority: RequestPriority;
   }) => {
-    if (!selectedWorkbenchId) return;
+    if (!selectedWorkspaceId) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      await WorkbenchApi.requestNew(selectedWorkbenchId, payload);
+      await WorkspaceApi.requestNew(selectedWorkspaceId, payload);
       setRequestDialogOpen(false);
-      await loadRequests(selectedWorkbenchId);
+      await loadRequests(selectedWorkspaceId);
     } catch {
       setError("Failed to create request");
     } finally {
@@ -151,15 +151,15 @@ export default function WorkbenchPage() {
   /* ====================================================== */
 
   const createAnomaly = async (payload: CreateAnomalyDto) => {
-    if (!selectedWorkbenchId) return;
+    if (!selectedWorkspaceId) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      await WorkbenchApi.reportAnomaly(selectedWorkbenchId, payload);
+      await WorkspaceApi.reportAnomaly(selectedWorkspaceId, payload);
       setAnomalyDialogOpen(false);
-      await loadAnomalies(selectedWorkbenchId);
+      await loadAnomalies(selectedWorkspaceId);
     } catch {
       setError("Failed to report anomaly");
     } finally {
@@ -172,13 +172,13 @@ export default function WorkbenchPage() {
   return (
     <Box sx={{ display: "flex", height: "100%" }}>
       {/* ================= Sidebar ================= */}
-      <WorkbenchSelector
+      <WorkspaceSelector
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        workbenches={workbenches}
-        selectedWorkbenchId={selectedWorkbenchId}
+        workspaces={workspaces}
+        selectedWorkspaceId={selectedWorkspaceId}
         onSelect={(id) => {
-          setSelectedWorkbenchId(id);
+          setSelectedWorkspaceId(id);
           localStorage.setItem(STORAGE_KEY, String(id));
         }}
       />
@@ -191,7 +191,7 @@ export default function WorkbenchPage() {
           </IconButton>
 
           <Typography variant="h4">
-            {selectedWorkbench?.name ?? "Workbench"}
+            {selectedWorkspace?.name ?? "Workspace"}
           </Typography>
         </Stack>
 
@@ -202,7 +202,7 @@ export default function WorkbenchPage() {
         )}
 
         {/* ================= Actions ================= */}
-        {selectedWorkbench && (
+        {selectedWorkspace && (
           <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
             <Button
               sx={{ flex: 1, height: 96, fontSize: 20 }}
@@ -232,7 +232,7 @@ export default function WorkbenchPage() {
         )}
 
         {/* ================= Tables ================= */}
-        {!isLoading && selectedWorkbench && (
+        {!isLoading && selectedWorkspace && (
           <>
             <RequestTable title="Active Requests" requests={activeRequests} />
             <RequestTable
@@ -240,7 +240,7 @@ export default function WorkbenchPage() {
               requests={historyRequests}
               isHistory={() => true}
             />
-            <AnomalyTable title="Reported Anomalies" anomalies={anomalies} />
+            <AnomalyTable title="Reported Anomalies" anomalies={anomalies} isAdmin={false} />
           </>
         )}
       </Box>

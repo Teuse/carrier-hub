@@ -12,8 +12,8 @@ data class LoadCarrierRequest(
     val id: Long = 0,
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "workbench_id", nullable = false)
-    val workbench: Workbench,
+    @JoinColumn(name = "workspace_id", nullable = false)
+    val workspace: Workspace,
 
     /* ===================== */
     /* Requested Load Carrier */

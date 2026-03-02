@@ -4,12 +4,12 @@ import jakarta.persistence.*
 
 @Entity
 @Table(
-    name = "workbench",
+    name = "workspace",
     uniqueConstraints = [
         UniqueConstraint(columnNames = ["name"])
     ]
 )
-data class Workbench(
+data class Workspace(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ data class Workbench(
     val active: Boolean = true,
 
     @OneToMany(
-        mappedBy = "workbench",
+        mappedBy = "workspace",
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL],
         orphanRemoval = true

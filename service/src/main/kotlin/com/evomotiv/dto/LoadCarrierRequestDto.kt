@@ -6,7 +6,7 @@ import java.time.Instant
 
 data class LoadCarrierRequestDto(
     val id: Long,
-    val workbenchId: Long,
+    val workspaceId: Long,
     val loadCarrierId: Long,
     val loadCarrierName: String,
     val comment: String?,

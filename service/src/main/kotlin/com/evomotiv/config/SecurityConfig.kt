@@ -22,13 +22,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @EnableMethodSecurity
 class SecurityConfig {
     /* Explicitly add the endpoints to secure here. Rule of thumb for this PoC:
-    All GET methods need ROLE_USER. Adding workbenches etc. need ROLE_ADMIN
+    All GET methods need ROLE_USER. Adding workspaces etc. need ROLE_ADMIN
     (Spring adds the prefix "ROLE_" automatically)
     The rest will be denied, except for documentation
     */
     val userAuthorizedEndpoints = arrayOf(
         "/api/dashboard/**",
-        "/api/workbenches/**",
+        "/api/workspaces/**",
         "/api/load-carriers/**",
         "/api/requests/**",
         "/api/anomalies/**",

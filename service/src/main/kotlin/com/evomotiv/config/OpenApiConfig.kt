@@ -17,7 +17,7 @@ class OpenApiConfig {
                     .description(
                         """
                         Backend API for:
-                        - Workbench load carrier requests
+                        - Workspace load carrier requests
                         - Logistics transport orders
                         - Warehouse tasks
                         """.trimIndent()
