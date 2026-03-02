@@ -7,6 +7,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import App from './App';
 import { msalConfig } from './auth'
+import { FeatureToggleProvider } from './context/FeatureToggleContext';
 
 // Create MSAL instance
 export const msalInstance = new PublicClientApplication(msalConfig);
@@ -29,11 +30,13 @@ ReactDOM.createRoot(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
-        <MsalProvider instance={msalInstance}>
-          <App />
-        </MsalProvider>
-      </BrowserRouter>
+      <FeatureToggleProvider>
+        <BrowserRouter>
+          <MsalProvider instance={msalInstance}>
+            <App />
+          </MsalProvider>
+        </BrowserRouter>
+      </FeatureToggleProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

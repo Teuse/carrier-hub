@@ -15,6 +15,7 @@ import RequestLoadCarrierDialog from "../components/RequestLoadCarrierDialog";
 import RequestTable from "../components/RequestTable";
 import ReportAnomalyDialog from "../components/ReportAnomalyDialog";
 
+import { useFeatureToggles } from "../context/FeatureToggleContext";
 import { WorkspaceApi } from "../api";
 import type {
   LoadCarrierRequestDto,
@@ -77,6 +78,8 @@ export default function WorkspacePage() {
   );
 
   const hasOpenRequest = activeRequests.length > 0;
+
+  const { toggles } = useFeatureToggles();
 
   /* ====================================================== */
   /* Initial load                                           */
@@ -204,14 +207,17 @@ export default function WorkspacePage() {
         {/* ================= Actions ================= */}
         {selectedWorkspace && (
           <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-            <Button
-              sx={{ flex: 1, height: 96, fontSize: 20 }}
-              variant="contained"
-              disabled={hasOpenRequest || isLoading}
-              onClick={() => setRequestDialogOpen(true)}
-            >
-              Request new load carrier
-            </Button>
+            
+            {!toggles.anomaliesOnly && (
+              <Button
+                sx={{ flex: 1, height: 96, fontSize: 20 }}
+                variant="contained"
+                disabled={hasOpenRequest || isLoading}
+                onClick={() => setRequestDialogOpen(true)}
+              >
+                Request new load carrier
+              </Button>
+            )}
 
             <Button
               sx={{ width: 400, fontSize: 18 }}
