@@ -263,11 +263,11 @@ export default function AnomalyRow({
               )}
 
               <Typography variant="body2" color="text.secondary">
-                Accepted/Declined by: {anomaly.createdBy ?? 'N/A'}
+                Created by: {anomaly.createdBy ?? 'N/A'}
               </Typography>
               {anomaly.reviewedBy && (
                 <Typography variant="body2" color="text.secondary">
-                  Reviewed by: {anomaly.reviewedBy}
+                  Accepted/Declined by: {anomaly.reviewedBy}
                 </Typography>
               )}
               {anomaly.updatedAt && (

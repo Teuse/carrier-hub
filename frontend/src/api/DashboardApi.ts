@@ -15,7 +15,17 @@ export interface DashboardOverviewDto {
   }[];
 }
 
+export interface DashboardChartDto {
+  anomaliesByStatusInWeek: Record<string, number>;
+  anomaliesPerWorkspace: {
+    workspaceName: string;
+    anomalyPercentage: number;
+  }[]
+}
+
 export const DashboardApi = {
   getOverview: (): Promise<DashboardOverviewDto> =>
     http('/api/dashboard/overview'),
+  getChartData: (): Promise<DashboardChartDto> =>
+    http('/api/dashboard/charts')
 };

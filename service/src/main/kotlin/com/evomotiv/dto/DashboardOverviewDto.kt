@@ -1,5 +1,7 @@
 package com.evomotiv.dto
 
+import com.evomotiv.model.AnomalyStatus
+
 data class DashboardOverviewDto(
     val totalRequests: Long,
     val openRequests: Long,
@@ -16,4 +18,14 @@ data class DashboardOverviewDto(
 data class WorkspaceCountDto(
     val workspaceName: String,
     val openRequests: Long
+)
+
+data class ChartDataDto(
+    val anomaliesByStatusInWeek: Map<AnomalyStatus, Long>,
+    val anomaliesPerWorkspace: List<WorkspaceAnomalyPercentageDto>,
+)
+
+data class WorkspaceAnomalyPercentageDto(
+    val name: String,
+    val anomalyPercentage: Long
 )
