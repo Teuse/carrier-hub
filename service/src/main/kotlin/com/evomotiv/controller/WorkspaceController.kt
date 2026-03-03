@@ -5,6 +5,7 @@ import com.evomotiv.service.AnomalyService
 import com.evomotiv.service.LoadCarrierRequestService
 import com.evomotiv.service.WorkspaceService
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Workspace", description = "Workspace operations")
@@ -12,24 +13,27 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/workspaces")
 class WorkspaceController(
     private val loadCarrierRequestService: LoadCarrierRequestService,
-    private val wbService: WorkspaceService,
+    private val workspaceService: WorkspaceService,
     private val anomalyService: AnomalyService
 ) {
-    @GetMapping("/all")
-    fun getAll(): List<WorkspaceDto> =
-        wbService.getAll()
-
     @GetMapping
-    fun getActive(): List<WorkspaceDto> =
-        wbService.getAllActive()
+    fun getAll(): List<WorkspaceDto> =
+        workspaceService.getAll()
 
     @PostMapping
     fun create(@RequestBody body: CreateWorkspaceDto): WorkspaceDto =
-        wbService.create(body.name, body.description)
+        workspaceService.create(body.name, body.description)
 
-    @PostMapping("/{id}/deactivate")
-    fun deactivate(@PathVariable id: Long): WorkspaceDto =
-        wbService.deactivate(id)
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: Long,
+        @RequestBody dto: CreateWorkspaceDto
+    ): WorkspaceDto =
+        workspaceService.update(id, dto)
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id: Long) = workspaceService.delete(id)
 
     /* ===================== */
     /* REQUESTS              */
@@ -59,12 +63,5 @@ class WorkspaceController(
         @PathVariable id: Long,
         @RequestBody dto: CreateAnomalyDto
     ): AnomalyDto = anomalyService.createAnomaly(id, dto)
-
-
-
-
-
-
-
 
 }

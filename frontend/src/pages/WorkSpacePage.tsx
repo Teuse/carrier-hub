@@ -86,7 +86,7 @@ export default function WorkspacePage() {
   /* ====================================================== */
 
   useEffect(() => {
-    WorkspaceApi.getActive().then(setWorkspaces);
+    WorkspaceApi.getAll().then(setWorkspaces);
   }, []);
 
   useEffect(() => {

@@ -13,9 +13,6 @@ export const WorkspaceApi = {
   /* Selection / Runtime                                  */
   /* ===================================================== */
 
-  getActive: (): Promise<WorkspaceDto[]> =>
-    http('/api/workspaces'),
-
   getRequests: (
     workspaceId: number
   ): Promise<LoadCarrierRequestDto[]> =>
@@ -69,7 +66,7 @@ export const WorkspaceApi = {
   /* ===================================================== */
 
   getAll: (): Promise<WorkspaceDto[]> =>
-    http('/api/workspaces/all'),
+    http('/api/workspaces'),
 
   create: (
     name: string,
@@ -81,8 +78,18 @@ export const WorkspaceApi = {
       body: JSON.stringify({ name, description }),
     }),
 
-  deactivate: (id: number): Promise<WorkspaceDto> =>
-    http(`/api/workspaces/${id}/deactivate`, {
-      method: 'POST',
-    }),
+  update: (
+    id: number,
+    payload: { name: string; description?: string }
+  ): Promise<WorkspaceDto> =>
+    http(`/api/workspaces/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+  }),
+
+  delete: (id: number): Promise<void> =>
+    http(`/api/workspaces/${id}`, {
+      method: 'DELETE',
+    })
 };

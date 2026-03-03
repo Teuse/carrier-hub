@@ -16,10 +16,9 @@ data class Workspace(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
-    val description: String? = null,
-    val active: Boolean = true,
+    var description: String? = null,
 
     @OneToMany(
         mappedBy = "workspace",

@@ -7,5 +7,4 @@ fun Workspace.toDto() = WorkspaceDto(
     id = id,
     name = name,
     description = description,
-    active = active
 )

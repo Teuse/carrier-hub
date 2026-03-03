@@ -4,7 +4,6 @@ data class WorkspaceDto(
     val id: Long,
     val name: String,
     val description: String?,
-    val active: Boolean
 )
 
 data class CreateWorkspaceDto(

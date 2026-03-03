@@ -2,8 +2,7 @@
 CREATE TABLE workspace (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    description TEXT,
-    active BOOLEAN NOT NULL DEFAULT true
+    description TEXT
 );
 
 CREATE UNIQUE INDEX ux_workspace_name ON workspace(name);
