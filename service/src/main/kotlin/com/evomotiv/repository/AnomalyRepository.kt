@@ -9,14 +9,23 @@ import org.springframework.data.repository.query.Param
 
 interface AnomalyRepository : JpaRepository<Anomaly, Long> {
 
-    fun findByWorkspaceId(workspaceId: Long): List<Anomaly>
+    fun findByWorkspaceIdAndStatusOrderByUpdatedAtDesc(workspaceId: Long, status: AnomalyStatus): List<Anomaly>
+
+    fun findByWorkspaceIdAndStatusNot(workspaceId: Long, status: AnomalyStatus): List<Anomaly>
 
     @Query(
-        """
-    SELECT a
-    FROM Anomaly a
-    JOIN FETCH a.workspace
-    """
+        value = """
+            SELECT a
+            FROM Anomaly a
+            JOIN FETCH a.workspace
+            ORDER BY CASE 
+                WHEN a.status='REPORTED' THEN 1
+                WHEN a.status='ACCEPTED_BY_PQ' THEN 2
+                WHEN a.status='DECLINED_BY_PQ' THEN 3
+                WHEN a.status='CLOSED' THEN 4
+                ELSE 5
+            END ASC
+            """
     )
     fun findAllWithWorkspace(): List<Anomaly>
 

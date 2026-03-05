@@ -22,10 +22,12 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import FlagIcon from '@mui/icons-material/Flag';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -142,6 +144,8 @@ export default function AnomalyRow({
         return <Chip label="Accepted" color="success" size="small" />;
       case 'DECLINED_BY_PQ':
         return <Chip label="Declined" color="error" size="small" />;
+      case 'CLOSED':
+        return <Chip label="Closed" color="success" variant="outlined" size="small" />;
       default:
         return <Chip label="Reported" size="small" />;
     }
@@ -153,7 +157,7 @@ export default function AnomalyRow({
     <>
       {/* ===== Collapsed Row ===== */}
       <TableRow hover>
-        <TableCell width={48}>
+        <TableCell>
           <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -171,7 +175,7 @@ export default function AnomalyRow({
                 <IconButton
                   size="small"
                   color="success"
-                  disabled={anomaly.status === 'ACCEPTED_BY_PQ'}
+                  disabled={anomaly.status === 'ACCEPTED_BY_PQ' || anomaly.status === 'CLOSED'}
                   onClick={() => onStatusChange(
                     anomaly.id,
                     anomaly.status === 'ACCEPTED_BY_PQ' ? 'REPORTED' : 'ACCEPTED_BY_PQ'
@@ -182,7 +186,7 @@ export default function AnomalyRow({
                 <IconButton
                   size="small"
                   color="error"
-                  disabled={anomaly.status === 'DECLINED_BY_PQ'}
+                  disabled={anomaly.status === 'DECLINED_BY_PQ' || anomaly.status === 'CLOSED'}
                   onClick={() => onStatusChange(
                     anomaly.id,
                     anomaly.status === 'DECLINED_BY_PQ' ? 'REPORTED' : 'DECLINED_BY_PQ'
@@ -203,6 +207,34 @@ export default function AnomalyRow({
             open={Boolean(menuAnchor)}
             onClose={() => setMenuAnchor(null)}
           >
+            {anomaly.status !== 'CLOSED' && (
+              <MenuItem
+                disabled={!isAdmin}
+                onClick={() => {
+                  setMenuAnchor(null);
+                  onStatusChange?.(anomaly.id, 'CLOSED');
+                }}
+              >
+                <ListItemIcon>
+                  <DoneAllIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Mark as Closed</ListItemText>
+              </MenuItem>
+            )}
+            {anomaly.status === 'CLOSED' && (
+              <MenuItem
+                disabled={!isAdmin}
+                onClick={() => {
+                  setMenuAnchor(null);
+                  onStatusChange?.(anomaly.id, 'REPORTED');
+                }}
+              >
+                <ListItemIcon>
+                  <FlagIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Re-Open</ListItemText>
+              </MenuItem>
+            )}
             <MenuItem onClick={openEditDialog} disabled={!isAdmin}>
               <ListItemIcon>
                 <EditIcon fontSize="small" />

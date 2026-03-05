@@ -24,7 +24,7 @@ export const msalConfig: Configuration = {
     redirectUri: import.meta.env.VITE_REDIRECT_URI,
   },
   cache: {
-    cacheLocation: "sessionStorage",
+    cacheLocation: "sessionStorage", // set to "localStorage" for auth persistence. Increases attack vectors, e.g. XSS!!!!
   },
 };
 

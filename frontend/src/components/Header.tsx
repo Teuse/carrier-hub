@@ -64,7 +64,7 @@ export default function Header() {
             fontWeight: isActive("/workspace") ? 600 : 400,
           }}
         >
-          Workspace
+          Workspaces
         </Button>
 
         {!toggles.anomaliesOnly && (

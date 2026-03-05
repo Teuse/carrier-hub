@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
-import java.util.Optional
 
 @Service
 class AnomalyService(
@@ -27,9 +26,13 @@ class AnomalyService(
     fun getAll(): List<AnomalyDto> =
         anomalyRepo.findAllWithWorkspace()
             .map { it.toDto() }
+    
+    fun getAllByWorkspaceNotClosed(id: Long): List<AnomalyDto> =
+        anomalyRepo.findByWorkspaceIdAndStatusNot(id, AnomalyStatus.CLOSED)
+            .map { it.toDto() }
 
-    fun getAllByWorkspace(workspaceId: Long): List<AnomalyDto> =
-        anomalyRepo.findByWorkspaceId(workspaceId)
+    fun getAllByWorkspaceClosed(id: Long): List<AnomalyDto> =
+        anomalyRepo.findByWorkspaceIdAndStatusOrderByUpdatedAtDesc(id, AnomalyStatus.CLOSED)
             .map { it.toDto() }
 
     fun createAnomaly(workspaceId: Long, dto: CreateAnomalyDto): AnomalyDto {

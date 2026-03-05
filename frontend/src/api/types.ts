@@ -65,7 +65,8 @@ export interface AnomalyDto {
 export type AnomalyStatus =
   | 'REPORTED'
   | 'DECLINED_BY_PQ'
-  | 'ACCEPTED_BY_PQ';
+  | 'ACCEPTED_BY_PQ'
+  | 'CLOSED';
 
 export interface CreateAnomalyDto {
   van?: string;

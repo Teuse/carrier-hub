@@ -11,13 +11,12 @@ import {
 
 import AnomalyRow from "./AnomalyRow";
 import type { AnomalyDto } from "../api";
-import { useMemo } from "react";
 
 interface AnomalyTableProps {
   title: string;
   anomalies: AnomalyDto[];
   isAdmin: boolean;
-  onStatusChange?: (id: number, status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ' | 'REPORTED') => void;
+  onStatusChange?: (id: number, status: 'ACCEPTED_BY_PQ' | 'DECLINED_BY_PQ' | 'REPORTED' | 'CLOSED') => void;
   onNotesChange?: (id: number, notes: string) => Promise<void>;
   onEdit?: (id: number, fields: { van?: string; pn?: string; kz?: string }) => Promise<void>;
   onDelete?: (id: number) => Promise<void>;
@@ -32,14 +31,6 @@ export default function AnomalyTable({
   onEdit,
   onDelete,
 }: AnomalyTableProps) {
-  const sortedAnomalies = useMemo(
-    () =>
-      [...anomalies].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      ),
-    [anomalies],
-  );
-
   return (
     <>
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
@@ -48,6 +39,14 @@ export default function AnomalyTable({
 
       <TableContainer component={Paper}>
         <Table>
+          <colgroup>
+            <col style={{ width: 48 }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+          </colgroup>
           <TableHead>
             <TableRow>
               <TableCell />
@@ -60,7 +59,7 @@ export default function AnomalyTable({
           </TableHead>
 
           <TableBody>
-            {sortedAnomalies.map((a) => (
+            {anomalies.map((a) => (
               <AnomalyRow
                 key={a.id}
                 anomaly={a}

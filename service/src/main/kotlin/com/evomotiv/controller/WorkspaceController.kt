@@ -54,9 +54,14 @@ class WorkspaceController(
     /* ANOMALIES             */
     /* ===================== */
 
-    @GetMapping("/{id}/anomalies")
-    fun getAnomalies(@PathVariable id: Long): List<AnomalyDto> =
-        anomalyService.getAllByWorkspace(id)
+    // might make sense to return this paginated
+    @GetMapping("/{id}/anomalies/closed")
+    fun getClosedAnomalies(@PathVariable id: Long): List<AnomalyDto> =
+        anomalyService.getAllByWorkspaceClosed(id)
+
+    @GetMapping("/{id}/anomalies/open")
+    fun getOpenAnomalies(@PathVariable id: Long): List<AnomalyDto> =
+        anomalyService.getAllByWorkspaceNotClosed(id)
 
     @PostMapping("/{id}/anomalies")
     fun createAnomaly(

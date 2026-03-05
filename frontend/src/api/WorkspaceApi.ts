@@ -31,10 +31,15 @@ export const WorkspaceApi = {
   getAllAnomalies: (): Promise<AnomalyDto[]> =>
     http('/api/anomalies'),
 
-  getAnomalies: (
+  getOpenAnomalies: (
     workspaceId: number
   ): Promise<AnomalyDto[]> =>
-    http(`/api/workspaces/${workspaceId}/anomalies`),
+    http(`/api/workspaces/${workspaceId}/anomalies/open`),
+
+  getClosedAnomalies: (
+    workspaceId: number
+  ): Promise<AnomalyDto[]> =>
+    http(`/api/workspaces/${workspaceId}/anomalies/closed`),
 
   reportAnomaly: (
     workspaceId: number,

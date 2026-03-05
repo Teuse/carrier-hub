@@ -48,7 +48,10 @@ class WorkspaceService(
         try {
             if (!workspaceRepository.existsById(id)) throw NoSuchElementException()
 
-            anomalyService.getAllByWorkspace(id).forEach {
+            anomalyService.getAllByWorkspaceClosed(id).forEach {
+                anomalyService.delete(it.id)
+            }
+            anomalyService.getAllByWorkspaceNotClosed(id).forEach {
                 anomalyService.delete(it.id)
             }
 
