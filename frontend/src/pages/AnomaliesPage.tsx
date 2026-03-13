@@ -1,48 +1,22 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Alert, CircularProgress } from "@mui/material";
 
-import { WorkbenchApi } from "../api";
-import type { AnomalyDto } from "../api";
+import { WorkspaceApi } from "../api";
+import { useAnomalies } from "../hooks/useAnomalies";
+import { isAdmin } from "../auth";
 import AnomalyTable from "../components/AnomalyTable";
-
 /* ====================================================== */
 
 export default function AnomaliesPage() {
-  const [anomalies, setAnomalies] = useState<AnomalyDto[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  /* ====================================================== */
+  const { anomalies, isLoading, error, load, updateStatus, updateNotes, updateFields, remove } =
+    useAnomalies(WorkspaceApi.getAllAnomalies);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    loadAnomalies();
+    void isAdmin().then(setAdmin);
+    void load();
   }, []);
 
-  const loadAnomalies = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await WorkbenchApi.getAllAnomalies();
-      setAnomalies(data);
-    } catch {
-      setError("Failed to load anomalies");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateAnomalyStatus = async (
-    anomalyId: number,
-    status: "ACCEPTED_BY_PQ" | "DECLINED_BY_PQ",
-  ) => {
-    try {
-      await WorkbenchApi.updateAnomaly(anomalyId, { status });
-      await loadAnomalies();
-    } catch {
-      setError("Failed to update anomaly status");
-    }
-  };
 
   /* ====================================================== */
 
@@ -68,7 +42,11 @@ export default function AnomaliesPage() {
         <AnomalyTable
           title="Reported Anomalies"
           anomalies={anomalies}
-          onStatusChange={updateAnomalyStatus}
+          isAdmin={admin}
+          onStatusChange={updateStatus}
+          onNotesChange={updateNotes}
+          onEdit={updateFields}
+          onDelete={remove}
         />
       )}
     </Box>

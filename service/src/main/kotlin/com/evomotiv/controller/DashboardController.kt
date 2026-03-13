@@ -13,4 +13,7 @@ class DashboardController(
 
     @GetMapping("/overview")
     fun overview() = dashboardService.getOverview()
+
+    @GetMapping("/charts")
+    fun plot() = dashboardService.getChartData()
 }

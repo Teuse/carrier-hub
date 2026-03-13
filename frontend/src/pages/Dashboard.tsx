@@ -7,9 +7,11 @@ import {
   CircularProgress,
   Divider,
 } from '@mui/material';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { PieChart } from '@mui/x-charts';
 
 import { DashboardApi } from '../api/DashboardApi';
-import type { DashboardOverviewDto } from '../api/DashboardApi';
+import type { DashboardOverviewDto, DashboardChartDto } from '../api/DashboardApi';
 
 /* ====================================================== */
 
@@ -44,11 +46,15 @@ export default function Dashboard() {
   const [data, setData] =
     useState<DashboardOverviewDto | null>(null);
 
+  const [chart, setChart] =
+    useState<DashboardChartDto | null>(null);
+
   useEffect(() => {
     DashboardApi.getOverview().then(setData);
+    DashboardApi.getChartData().then(setChart)
   }, []);
 
-  if (!data) {
+  if (!data || !chart) {
     return (
       <Box
         sx={{
@@ -68,6 +74,35 @@ export default function Dashboard() {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
+
+      {/* ================= Charts ================= */}
+
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h6">Anomalies by Status (last 7 days)</Typography>
+          <PieChart
+            series={[
+              {
+                data: Object.entries(chart.anomaliesByStatusInWeek).map(
+                  ([label, value], index) => ({ id: index, value, label }))
+              }
+            ]}
+            width={400}
+            height={300}
+          />
+        </Box>
+
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h6">% of Anomalies by Workspace</Typography>          
+          <BarChart
+            dataset={chart.anomaliesPerWorkspace}
+            xAxis={[{ dataKey: 'name', scaleType: 'band', label: 'Workspace' }]}
+            yAxis={[{ label: 'Anomaly %' }]}
+            series={[{ dataKey: 'anomalyPercentage' }]}
+            height={300}
+          />
+        </Box>
+      </Box>
 
       {/* ================= KPI BAR ================= */}
       <Stack
@@ -128,30 +163,30 @@ export default function Dashboard() {
         </Stack>
       </Paper>
 
-      {/* ================= WORKBENCHES ================= */}
+      {/* ================= WORKSPACES ================= */}
       <Paper sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Open Requests by Workbench
+          Open Requests by Workspace
         </Typography>
 
         <Divider sx={{ mb: 2 }} />
 
         <Stack spacing={1}>
-          {data.requestsByWorkbench.length === 0 && (
+          {data.requestsByWorkspace.length === 0 && (
             <Typography color="text.secondary">
               No open requests
             </Typography>
           )}
 
-          {data.requestsByWorkbench.map((w) => (
+          {data.requestsByWorkspace.map((w) => (
             <Box
-              key={w.workbenchName}
+              key={w.workspaceName}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
             >
-              <Typography>{w.workbenchName}</Typography>
+              <Typography>{w.workspaceName}</Typography>
               <Typography>{w.openRequests}</Typography>
             </Box>
           ))}

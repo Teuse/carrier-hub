@@ -8,33 +8,33 @@ import {
   ListItemText,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
-import type { WorkbenchDto } from '../api';
+import type { WorkspaceDto } from '../api';
 
-interface WorkbenchSelectorProps {
+interface WorkspaceSelectorProps {
   open: boolean;
   onClose: () => void;
 
-  workbenches: WorkbenchDto[];
-  selectedWorkbenchId: number | null;
+  workspaces: WorkspaceDto[];
+  selectedWorkspaceId: number | null;
 
   onSelect: (id: number) => void;
 }
 
-export default function WorkbenchSelector({
+export default function WorkspaceSelector({
   open,
   onClose,
-  workbenches,
-  selectedWorkbenchId,
+  workspaces,
+  selectedWorkspaceId,
   onSelect,
-}: WorkbenchSelectorProps) {
+}: WorkspaceSelectorProps) {
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(
     () =>
-      workbenches.filter((wb) =>
+      workspaces.filter((wb) =>
         wb.name.toLowerCase().includes(search.toLowerCase())
       ),
-    [workbenches, search]
+    [workspaces, search]
   );
 
   return (
@@ -44,7 +44,7 @@ export default function WorkbenchSelector({
       onClose={onClose}
       PaperProps={{ sx: { width: 320, p: 2 } }}
     >
-      <Typography variant="h6">Select Workbench</Typography>
+      <Typography variant="h6">Select Workspace</Typography>
 
       <TextField
         fullWidth
@@ -60,7 +60,7 @@ export default function WorkbenchSelector({
         {filtered.map((wb) => (
           <ListItemButton
             key={wb.id}
-            selected={wb.id === selectedWorkbenchId}
+            selected={wb.id === selectedWorkspaceId}
             onClick={() => {
               onSelect(wb.id);
               onClose();

@@ -1,9 +1,14 @@
 package com.evomotiv.service
 
+import com.evomotiv.dto.ChartDataDto
 import com.evomotiv.dto.DashboardOverviewDto
-import com.evomotiv.dto.WorkbenchCountDto
+import com.evomotiv.dto.WorkspaceAnomalyPercentageDto
+import com.evomotiv.dto.WorkspaceCountDto
+import com.evomotiv.model.AnomalyStatus
 import com.evomotiv.repository.LoadCarrierRequestRepository
 import com.evomotiv.model.LoadCarrierRequestStatus
+import com.evomotiv.repository.AnomalyRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
@@ -12,6 +17,8 @@ import java.time.Instant
 class DashboardService(
     private val requestRepo: LoadCarrierRequestRepository
 ) {
+    @Autowired
+    lateinit var anomalyRepo: AnomalyRepository
 
     fun getOverview(): DashboardOverviewDto {
         val all = requestRepo.findAll()
@@ -38,12 +45,12 @@ class DashboardService(
         val byStatus =
             all.groupingBy { it.status.name }.eachCount()
 
-        val byWorkbench = all
+        val byWorkspace = all
             .filter { it.status != LoadCarrierRequestStatus.DELIVERED }
-            .groupBy { it.workbench.name }
+            .groupBy { it.workspace.name }
             .map { (name, list) ->
-                WorkbenchCountDto(
-                    workbenchName = name,
+                WorkspaceCountDto(
+                    workspaceName = name,
                     openRequests = list.size.toLong()
                 )
             }
@@ -65,7 +72,21 @@ class DashboardService(
             deliveredToday = deliveredToday.toLong(),
             avgLeadTimeMinutes = avgLeadTime,
             requestsByStatus = byStatus.mapValues { it.value.toLong() },
-            requestsByWorkbench = byWorkbench
+            requestsByWorkspace = byWorkspace
+        )
+    }
+
+    fun getChartData(): ChartDataDto {
+        val anomaliesByStatusInWeek: Map<AnomalyStatus, Long> =
+            AnomalyStatus.entries.toTypedArray().associateWith { status ->
+                anomalyRepo.countAnomaliesByStatusInWeek(status)
+            }
+        val anomaliesPerWorkspace: List<WorkspaceAnomalyPercentageDto> =
+            anomalyRepo.countRelativeAnomaliesPerWorkspace()
+
+        return ChartDataDto(
+            anomaliesByStatusInWeek = anomaliesByStatusInWeek,
+            anomaliesPerWorkspace = anomaliesPerWorkspace
         )
     }
 }

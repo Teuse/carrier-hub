@@ -1,6 +1,6 @@
 import { http } from './http';
 import type {
-  WorkbenchDto,
+  WorkspaceDto,
   LoadCarrierRequestDto,
   CreateLoadCarrierRequestDto,
   AnomalyDto,
@@ -8,24 +8,21 @@ import type {
   UpdateAnomalyDto,
 } from './types';
 
-export const WorkbenchApi = {
+export const WorkspaceApi = {
   /* ===================================================== */
   /* Selection / Runtime                                  */
   /* ===================================================== */
 
-  getActive: (): Promise<WorkbenchDto[]> =>
-    http('/api/workbenches'),
-
   getRequests: (
-    workbenchId: number
+    workspaceId: number
   ): Promise<LoadCarrierRequestDto[]> =>
-    http(`/api/workbenches/${workbenchId}/requests`),
+    http(`/api/workspaces/${workspaceId}/requests`),
 
   requestNew: (
-    workbenchId: number,
+    workspaceId: number,
     payload: CreateLoadCarrierRequestDto
   ): Promise<LoadCarrierRequestDto> =>
-    http(`/api/workbenches/${workbenchId}/requests`, {
+    http(`/api/workspaces/${workspaceId}/requests`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -34,16 +31,21 @@ export const WorkbenchApi = {
   getAllAnomalies: (): Promise<AnomalyDto[]> =>
     http('/api/anomalies'),
 
-  getAnomalies: (
-    workbenchId: number
+  getOpenAnomalies: (
+    workspaceId: number
   ): Promise<AnomalyDto[]> =>
-    http(`/api/workbenches/${workbenchId}/anomalies`),
+    http(`/api/workspaces/${workspaceId}/anomalies/open`),
+
+  getClosedAnomalies: (
+    workspaceId: number
+  ): Promise<AnomalyDto[]> =>
+    http(`/api/workspaces/${workspaceId}/anomalies/closed`),
 
   reportAnomaly: (
-    workbenchId: number,
+    workspaceId: number,
     payload: CreateAnomalyDto
   ): Promise<AnomalyDto> =>
-    http(`/api/workbenches/${workbenchId}/anomalies`, {
+    http(`/api/workspaces/${workspaceId}/anomalies`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -57,26 +59,42 @@ export const WorkbenchApi = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-  }),
+    }),
+
+  deleteAnomaly: (anomalyId: number): Promise<void> =>
+    http(`/api/anomalies/${anomalyId}`, {
+      method: 'DELETE',
+    }),
+
   /* ===================================================== */
   /* Management / Admin                                   */
   /* ===================================================== */
 
-  getAll: (): Promise<WorkbenchDto[]> =>
-    http('/api/workbenches/all'),
+  getAll: (): Promise<WorkspaceDto[]> =>
+    http('/api/workspaces'),
 
   create: (
     name: string,
     description?: string
-  ): Promise<WorkbenchDto> =>
-    http('/api/workbenches', {
+  ): Promise<WorkspaceDto> =>
+    http('/api/workspaces', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description }),
     }),
 
-  deactivate: (id: number): Promise<WorkbenchDto> =>
-    http(`/api/workbenches/${id}/deactivate`, {
-      method: 'POST',
-    }),
+  update: (
+    id: number,
+    payload: { name: string; description?: string }
+  ): Promise<WorkspaceDto> =>
+    http(`/api/workspaces/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+  }),
+
+  delete: (id: number): Promise<void> =>
+    http(`/api/workspaces/${id}`, {
+      method: 'DELETE',
+    })
 };

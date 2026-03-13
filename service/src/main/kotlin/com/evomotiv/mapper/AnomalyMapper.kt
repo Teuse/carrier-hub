@@ -2,6 +2,7 @@ package com.evomotiv.mapper
 
 import com.evomotiv.dto.AnomalyDto
 import com.evomotiv.model.Anomaly
+import kotlin.String
 
 fun Anomaly.toDto() = AnomalyDto(
     id = id,
@@ -9,8 +10,10 @@ fun Anomaly.toDto() = AnomalyDto(
     pn = pn,
     kz = kz,
     notes = notes,
-    workbench = workbench.toDto(),
+    workspace = workspace.toDto(),
     status = status,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    createdBy = createdBy,
+    reviewedBy = reviewedBy
 )

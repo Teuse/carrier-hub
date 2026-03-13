@@ -41,7 +41,7 @@ export default function RequestTable({
             <TableRow>
               <TableCell />
               <TableCell>Name</TableCell>
-              <TableCell>Workbench</TableCell>
+              <TableCell>Workspace</TableCell>
               <TableCell>Priority</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="right">Action</TableCell>

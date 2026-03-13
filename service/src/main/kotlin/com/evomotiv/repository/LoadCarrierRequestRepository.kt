@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface LoadCarrierRequestRepository :
     JpaRepository<LoadCarrierRequest, Long> {
 
-    fun findByWorkbenchId(workbenchId: Long): List<LoadCarrierRequest>
+    fun findByWorkspaceId(workspaceId: Long): List<LoadCarrierRequest>
 }

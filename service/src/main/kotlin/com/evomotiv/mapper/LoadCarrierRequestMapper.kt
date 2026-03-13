@@ -5,7 +5,7 @@ import com.evomotiv.model.LoadCarrierRequest
 
 fun LoadCarrierRequest.toDto() = LoadCarrierRequestDto(
     id = id,
-    workbenchId = workbench.id,
+    workspaceId = workspace.id,
     loadCarrierId = loadCarrier.id,
     loadCarrierName = loadCarrier.name,
     comment = comment,

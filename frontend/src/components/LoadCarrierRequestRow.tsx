@@ -65,7 +65,7 @@ export default function LoadCarrierRequestRow({
         </TableCell>
 
         <TableCell>
-          {request.workbenchName}
+          {request.workspaceName}
         </TableCell>
 
         <TableCell>
@@ -122,8 +122,8 @@ export default function LoadCarrierRequestRow({
                 </Typography>
 
                 <Typography>
-                  <strong>Workbench:</strong>{' '}
-                  {request.workbenchName}
+                  <strong>Workspace:</strong>{' '}
+                  {request.workspaceName}
                 </Typography>
 
                 {isHistory && (
