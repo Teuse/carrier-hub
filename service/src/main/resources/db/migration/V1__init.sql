@@ -64,6 +64,25 @@ CREATE TABLE load_carrier_request (
         REFERENCES load_carrier (id)
 );
 
+-- GraphAPI Subscription Objects
+CREATE TABLE graph_api_sub (
+    id TEXT PRIMARY KEY,
+    application_id TEXT,
+    change_type TEXT,
+    client_state TEXT,
+    creator_id TEXT,
+    encryption_certificate TEXT,
+    encryption_certificate_id TEXT,
+    expiration_date_time TIMESTAMP,
+    include_resource_data BOOLEAN,
+    latest_supported_tls_version TEXT,
+    lifecycle_notification_url TEXT,
+    notification_query_options TEXT,
+    notification_url TEXT,
+    notification_url_app_id TEXT,
+    resource TEXT
+);
+
 -- Indexes (recommended)
 --CREATE INDEX idx_request_workspace_id ON load_carrier_request(workspace_id);
 --CREATE INDEX idx_request_status ON load_carrier_request(status);

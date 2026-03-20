@@ -35,6 +35,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+    implementation("com.microsoft.azure:msal4j:1.17.0")
+    implementation("com.azure:azure-identity:1.15.0")
+    implementation("com.microsoft.graph:microsoft-graph:6.62.0")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.flywaydb:flyway-core")
